@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" data-theme="day">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fdf7ee">
+<link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+<link rel="apple-touch-icon" href="assets/icons/favicon.svg">
+<title>四季之心 · 小兔子与小狐狸</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="四季之心 · 小兔子与小狐狸">
+<meta property="og:description" content="扮演小兔子或小狐狸，用每天三格行动安排生活，28 天一场从朋友开始的恋爱养成。">
+<meta property="og:image" content="assets/images/og-share.jpg">
+<meta property="og:image:width" content="1000">
+<meta property="og:image:height" content="1000">
+<meta property="og:site_name" content="兔子与小狐狸 · 森林手记">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="四季之心 · 小兔子与小狐狸">
+<meta name="twitter:description" content="扮演小兔子或小狐狸，用每天三格行动安排生活，28 天一场从朋友开始的恋爱养成。">
+<meta name="twitter:image" content="assets/images/og-share.jpg">
+<script>
+  try { document.documentElement.setAttribute("data-theme", localStorage.getItem("bunny-fox-theme") || "day"); } catch (e) {}
+  /* 分享图：源码保持相对路径，运行时按当前页面地址补全成绝对 URL，供微信客户端读取 */
+  (function () {
+    try {
+      var abs = new URL("assets/images/og-share.jpg", location.href).href;
+      ["meta[property='og:image']", "meta[name='twitter:image']"].forEach(function (sel) {
+        var el = document.querySelector(sel);
+        if (el) el.setAttribute("content", abs);
+      });
+    } catch (e) {}
+  })();
+</script>
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/game.css">
+</head>
+<body>
+
+<!-- 微信分享兜底图：客户端可能只取页面第一张图，故保留真实 <img>（仍是相对路径） -->
+<img src="assets/images/og-share.jpg" width="300" height="300" alt="" aria-hidden="true"
+     style="position:absolute;top:0;left:0;opacity:0;pointer-events:none;z-index:-1">
+
+<!-- 共享特效层 -->
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+<canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+<!-- 导航 -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">兔子<span class="dot">·</span>小狐狸</a>
+    <div class="nav-links">
+      <a href="index.html">← 回到手记首页</a>
+      <a href="index.html#chapters">四则故事</a>
+      <a href="index.html#play">玩法说明</a>
+    </div>
+    <div class="nav-tools">
+      <button class="icon-btn" id="albumBtn" type="button" title="回忆册" aria-label="打开回忆册">📖</button>
+      <button class="icon-btn" id="helpBtn" type="button" title="玩法说明" aria-label="查看玩法说明">❔</button>
+      <button class="icon-btn" id="resetBtn" type="button" title="重新开始" aria-label="重新开始">↺</button>
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="切换到夜间模式">🌙</button>
+      <button class="icon-btn" id="soundToggle" type="button" aria-label="开启音效">🔇</button>
+    </div>
+  </div>
+</nav>
+
+<main class="game-page">
+  <div class="game-shell">
+    <!-- 状态面板 -->
+    <div class="hud" id="hud"></div>
+
+    <div class="game-board">
+      <div class="scene-row">
+        <!-- 今日场景 -->
+        <div class="scene-card" id="sceneCard" aria-label="今日场景"></div>
+        <!-- 今日手记 -->
+        <aside class="diary-card" id="diaryCard"></aside>
+      </div>
+
+      <!-- 行动 -->
+      <div class="actions-block">
+        <div class="block-head">
+          <div>
+            <span class="eyebrow">今日安排</span>
+            <h2>今天做点什么？</h2>
+          </div>
+          <p id="actionsHint">每格行动都会写进手记，随时可以合上这一页。</p>
+        </div>
+        <div class="action-grid" id="actionGrid"></div>
+      </div>
+    </div>
+
+    <div class="day-footer" id="dayFooter"></div>
+  </div>
+</main>
+
+<!-- 手机底部操作条 -->
+<div class="mobile-bar" id="mobileBar"></div>
+
+<!-- 通用弹层 -->
+<div class="overlay-backdrop" id="overlay" aria-hidden="true">
+  <div class="overlay-card" id="overlayCard" role="dialog" aria-modal="true"></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/js/core.js"></script>
+<script src="assets/js/art.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/minigames.js"></script>
+<script src="assets/js/game.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 1000 1000" role="img" aria-label="小兔子与小狐狸 · 森林手记 分享缩略图">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="34%" r="80%">
+      <stop offset="0%" stop-color="#fffdf6"/>
+      <stop offset="60%" stop-color="#fdf3e2"/>
+      <stop offset="100%" stop-color="#f4e0c4"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="50%" cy="40%" r="64%">
+      <stop offset="0%" stop-color="#fffdf4"/>
+      <stop offset="100%" stop-color="#fae7cb"/>
+    </radialGradient>
+    <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#e07a3f" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#e07a3f" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#e07a3f" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景与细线内框 -->
+  <rect width="1000" height="1000" fill="url(#bgGlow)"/>
+  <rect x="34" y="34" width="932" height="932" rx="48" fill="none" stroke="#e8c9a4" stroke-width="2.5" opacity="0.85"/>
+  <rect x="51" y="51" width="898" height="898" rx="38" fill="none" stroke="#f2ddc0" stroke-width="1.5" opacity="0.9"/>
+
+  <!-- 顶部眉题（与暖光圆留出间距，避免被圆盖住） -->
+  <line x1="168" y1="104" x2="252" y2="104" stroke="#e0a06c" stroke-width="2" stroke-linecap="round"/>
+  <line x1="748" y1="104" x2="832" y2="104" stroke="#e0a06c" stroke-width="2" stroke-linecap="round"/>
+  <text x="500" y="112" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" letter-spacing="6" fill="#b85c2a">FOREST NOTES · 森林手记</text>
+
+  <!-- 中央暖光圆 -->
+  <circle cx="500" cy="436" r="292" fill="url(#halo)"/>
+  <circle cx="500" cy="436" r="292" fill="none" stroke="#f0d6b2" stroke-width="3" opacity="0.75"/>
+  <circle cx="500" cy="436" r="272" fill="none" stroke="#fffaf0" stroke-width="2" opacity="0.8"/>
+
+  <!-- 萤火粒子 -->
+  <g fill="#e6a45f">
+    <circle cx="280" cy="262" r="5" opacity="0.55"/>
+    <circle cx="330" cy="205" r="4" opacity="0.42"/>
+    <circle cx="366" cy="296" r="3" opacity="0.5"/>
+    <circle cx="414" cy="196" r="6" opacity="0.5"/>
+    <circle cx="500" cy="180" r="5" opacity="0.6"/>
+    <circle cx="588" cy="190" r="4" opacity="0.48"/>
+    <circle cx="650" cy="258" r="5" opacity="0.55"/>
+    <circle cx="700" cy="230" r="3" opacity="0.42"/>
+    <circle cx="758" cy="330" r="6" opacity="0.48"/>
+    <circle cx="276" cy="474" r="4" opacity="0.45"/>
+    <circle cx="712" cy="486" r="3" opacity="0.5"/>
+    <circle cx="336" cy="566" r="5" opacity="0.4"/>
+    <circle cx="668" cy="566" r="4" opacity="0.45"/>
+    <circle cx="500" cy="662" r="4" opacity="0.5"/>
+  </g>
+
+  <!-- 飘落的花瓣 -->
+  <g opacity="0.72">
+    <ellipse cx="228" cy="352" rx="9" ry="5" fill="#f4b9bd" transform="rotate(-28 228 352)"/>
+    <ellipse cx="782" cy="404" rx="8" ry="4.5" fill="#f4b9bd" transform="rotate(24 782 404)"/>
+    <ellipse cx="350" cy="190" rx="8" ry="4" fill="#cddcb4" transform="rotate(36 350 190)"/>
+    <ellipse cx="676" cy="616" rx="7" ry="4" fill="#cddcb4" transform="rotate(-32 676 616)"/>
+    <ellipse cx="255" cy="560" rx="7" ry="4" fill="#f4b9bd" transform="rotate(18 255 560)"/>
+  </g>
+
+  <!-- 落地阴影：淡而短，避免抢画面 -->
+  <ellipse cx="310" cy="588" rx="98" ry="13" fill="#d9b48c" opacity="0.16"/>
+  <ellipse cx="690" cy="588" rx="98" ry="13" fill="#d9b48c" opacity="0.16"/>
+
+  <!-- 小兔子（细描边让浅色轮廓在暖底上更清楚） -->
+  <g transform="translate(160, 246) scale(1.5)">
+    <ellipse cx="78" cy="48" rx="15" ry="40" fill="#f7e4d8" stroke="#e8cdb8" stroke-width="1.2" transform="rotate(-8 78 48)"/>
+    <ellipse cx="122" cy="48" rx="15" ry="40" fill="#f7e4d8" stroke="#e8cdb8" stroke-width="1.2" transform="rotate(8 122 48)"/>
+    <ellipse cx="78" cy="52" rx="7" ry="27" fill="#f2c6c6" transform="rotate(-8 78 52)"/>
+    <ellipse cx="122" cy="52" rx="7" ry="27" fill="#f2c6c6" transform="rotate(8 122 52)"/>
+    <ellipse cx="100" cy="172" rx="56" ry="46" fill="#f7e4d8" stroke="#e8cdb8" stroke-width="1.2"/>
+    <ellipse cx="100" cy="176" rx="30" ry="28" fill="#fdf0e6"/>
+    <circle cx="100" cy="118" r="52" fill="#fdf0e6" stroke="#e8cdb8" stroke-width="1.2"/>
+    <circle cx="68" cy="132" r="9" fill="#f7c8c8" opacity="0.7"/>
+    <circle cx="132" cy="132" r="9" fill="#f7c8c8" opacity="0.7"/>
+    <circle cx="82" cy="112" r="6" fill="#5a4636"/>
+    <circle cx="118" cy="112" r="6" fill="#5a4636"/>
+    <circle cx="84" cy="110" r="2" fill="#ffffff"/>
+    <circle cx="120" cy="110" r="2" fill="#ffffff"/>
+    <path d="M100 132 q-6 8 -12 4" stroke="#c98b6e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M100 132 q6 8 12 4" stroke="#c98b6e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="100" cy="128" rx="5" ry="4" fill="#e8a0a0"/>
+    <line x1="60" y1="124" x2="42" y2="120" stroke="#d8c4b4" stroke-width="2" stroke-linecap="round"/>
+    <line x1="60" y1="132" x2="42" y2="134" stroke="#d8c4b4" stroke-width="2" stroke-linecap="round"/>
+    <line x1="140" y1="124" x2="158" y2="120" stroke="#d8c4b4" stroke-width="2" stroke-linecap="round"/>
+    <line x1="140" y1="132" x2="158" y2="134" stroke="#d8c4b4" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- 小狐狸 -->
+  <g transform="translate(540, 246) scale(1.5)">
+    <g transform="rotate(45 143 170)">
+      <ellipse cx="143" cy="158" rx="27" ry="48" fill="#d96b30"/>
+      <ellipse cx="143" cy="155" rx="22" ry="43" fill="#ef8a45"/>
+      <path d="M143 105 C156 107 163 117 162 129 C161 140 152 145 143 145 C134 145 125 140 124 129 C123 117 130 107 143 105 Z" fill="#f6d9bd"/>
+      <path d="M143 108 C154 110 160 118 159 128 C158 137 151 142 143 142 C135 142 128 137 127 128 C126 118 132 110 143 108 Z" fill="#fff5ec"/>
+      <path d="M126 132 Q132 126 138 133 Q143 126 149 133 Q155 127 160 132 Q159 145 143 146 Q127 145 126 132 Z" fill="#ef8a45"/>
+    </g>
+    <ellipse cx="78" cy="207" rx="15" ry="8" fill="#d9682c"/>
+    <ellipse cx="122" cy="207" rx="15" ry="8" fill="#d9682c"/>
+    <ellipse cx="100" cy="172" rx="49" ry="45" fill="#ec8341"/>
+    <ellipse cx="100" cy="180" rx="28" ry="30" fill="#fff5ec"/>
+    <path d="M62 80 C56 60 52 36 50 18 C70 30 88 44 96 62 Z" fill="#ec8341"/>
+    <path d="M138 80 C144 60 148 36 150 18 C130 30 112 44 104 62 Z" fill="#ec8341"/>
+    <path d="M62 72 C58 56 55 40 54 30 C69 40 81 50 88 62 Z" fill="#f4b7a4"/>
+    <path d="M138 72 C142 56 145 40 146 30 C131 40 119 50 112 62 Z" fill="#f4b7a4"/>
+    <path d="M54 30 C58 38 63 45 68 50 C62 47 57 40 54 30 Z" fill="#e89a8c" opacity="0.7"/>
+    <path d="M146 30 C142 38 137 45 132 50 C138 47 143 40 146 30 Z" fill="#e89a8c" opacity="0.7"/>
+    <path d="M100 56 C128 56 150 70 152 96 C153 123 132 150 100 150 C68 150 47 123 48 96 C50 70 72 56 100 56 Z" fill="#ec8341"/>
+    <ellipse cx="62" cy="106" rx="10" ry="16" fill="#f6a05c" opacity="0.4"/>
+    <ellipse cx="138" cy="106" rx="10" ry="16" fill="#f6a05c" opacity="0.4"/>
+    <ellipse cx="100" cy="67" rx="30" ry="8" fill="#f6a05c" opacity="0.35"/>
+    <path d="M100 70 C104 78 106 86 104 93 C102 89 100 87 100 87 C100 87 98 89 96 93 C94 86 96 78 100 70 Z" fill="#fff5ec" opacity="0.9"/>
+    <path d="M100 108 C108 100 116 102 122 110 C130 120 128 134 116 143 C108 148 92 148 84 143 C72 134 70 120 78 110 C84 102 92 100 100 108 Z" fill="#fff5ec"/>
+    <path d="M88 142 Q100 148 112 142" stroke="#f2ded0" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <ellipse cx="60" cy="116" rx="9" ry="5" fill="#f0a08f" opacity="0.45"/>
+    <ellipse cx="140" cy="116" rx="9" ry="5" fill="#f0a08f" opacity="0.45"/>
+    <ellipse cx="78" cy="100" rx="5.8" ry="7.2" fill="#4a372c"/>
+    <ellipse cx="122" cy="100" rx="5.8" ry="7.2" fill="#4a372c"/>
+    <circle cx="80" cy="97.5" r="2.5" fill="#ffffff"/>
+    <circle cx="124" cy="97.5" r="2.5" fill="#ffffff"/>
+    <circle cx="76" cy="103" r="1.1" fill="#ffffff" opacity="0.65"/>
+    <circle cx="120" cy="103" r="1.1" fill="#ffffff" opacity="0.65"/>
+    <path d="M70 89 Q78 84 87 90" stroke="#c96a32" stroke-width="2.4" fill="none" stroke-linecap="round" opacity="0.85"/>
+    <path d="M113 90 Q122 84 130 89" stroke="#c96a32" stroke-width="2.4" fill="none" stroke-linecap="round" opacity="0.85"/>
+    <path d="M100 135 L100 138 M100 138 Q94 144 88 139 M100 138 Q106 144 112 139" stroke="#4a372c" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M95 129 Q100 127 105 129 Q105 133 100 135 Q95 133 95 129 Z" fill="#4a372c"/>
+    <ellipse cx="98.5" cy="129.5" rx="1.6" ry="1" fill="#ffffff" opacity="0.3"/>
+  </g>
+
+  <!-- 中间的爱心 -->
+  <g transform="translate(456, 316) scale(1.3)">
+    <path d="M34 57 C9 41 1 26 11 16 C19 8 30 12 34 21 C38 12 49 8 57 16 C67 26 59 41 34 57 Z" fill="#fffdf6" opacity="0.92"/>
+    <path d="M34 52 C12 37 6 25 14 17 C21 10 30 14 34 22 C38 14 47 10 54 17 C62 25 56 37 34 52 Z" fill="#f2a5a5"/>
+  </g>
+
+  <!-- 红蘑菇，呼应「雨中的蘑菇」 -->
+  <g transform="translate(302, 638) scale(0.62)">
+    <rect x="-9" y="-24" width="18" height="36" rx="8" fill="#fdf0e6"/>
+    <path d="M-34 -22 C-34 -48 -18 -60 0 -60 C18 -60 34 -48 34 -22 Z" fill="#d9705f"/>
+    <circle cx="-14" cy="-40" r="6" fill="#fff3e4" opacity="0.9"/>
+    <circle cx="13" cy="-46" r="5" fill="#fff3e4" opacity="0.9"/>
+  </g>
+  <g transform="translate(698, 640) scale(0.52)">
+    <rect x="-9" y="-24" width="18" height="36" rx="8" fill="#fdf0e6"/>
+    <path d="M-34 -22 C-34 -48 -18 -60 0 -60 C18 -60 34 -48 34 -22 Z" fill="#e0846c"/>
+    <circle cx="-13" cy="-41" r="6" fill="#fff3e4" opacity="0.9"/>
+  </g>
+
+  <!-- 标题区 -->
+  <line x1="330" y1="758" x2="670" y2="758" stroke="url(#rule)" stroke-width="2"/>
+  <text x="500" y="838" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, Heiti SC, sans-serif" font-size="84" font-weight="800" letter-spacing="4" fill="#46372a">小兔子与小狐狸</text>
+  <text x="500" y="896" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="31" font-weight="600" letter-spacing="10" fill="#b85c2a">森林手记 · 四季之心</text>
+  <text x="500" y="938" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" letter-spacing="2" fill="#9a836e">二十八天，把「最要好的朋友」写成别的什么</text>
+</svg>

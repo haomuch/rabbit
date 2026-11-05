@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" data-theme="day">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fdf7ee">
+<link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+<link rel="apple-touch-icon" href="assets/icons/favicon.svg">
+<title>小兔子与小狐狸 · 森林手记</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="小兔子与小狐狸 · 森林手记">
+<meta property="og:description" content="森林深处，住着一只小兔子和它最要好的小狐狸朋友。二十八天，把「最要好的朋友」慢慢写成别的什么。">
+<meta property="og:image" content="assets/images/og-share.jpg">
+<meta property="og:image:width" content="1000">
+<meta property="og:image:height" content="1000">
+<meta property="og:site_name" content="兔子与小狐狸 · 森林手记">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="小兔子与小狐狸 · 森林手记">
+<meta name="twitter:description" content="森林深处，住着一只小兔子和它最要好的小狐狸朋友。二十八天，把「最要好的朋友」慢慢写成别的什么。">
+<meta name="twitter:image" content="assets/images/og-share.jpg">
+<script>
+  try { document.documentElement.setAttribute("data-theme", localStorage.getItem("bunny-fox-theme") || "day"); } catch (e) {}
+  /* 分享图：源码保持相对路径，运行时按当前页面地址补全成绝对 URL，供微信客户端读取 */
+  (function () {
+    try {
+      var abs = new URL("assets/images/og-share.jpg", location.href).href;
+      ["meta[property='og:image']", "meta[name='twitter:image']"].forEach(function (sel) {
+        var el = document.querySelector(sel);
+        if (el) el.setAttribute("content", abs);
+      });
+    } catch (e) {}
+  })();
+</script>
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+
+<!-- 微信分享兜底图：客户端可能只取页面第一张图，故保留真实 <img>（仍是相对路径） -->
+<img src="assets/images/og-share.jpg" width="300" height="300" alt="" aria-hidden="true"
+     style="position:absolute;top:0;left:0;opacity:0;pointer-events:none;z-index:-1">
+
+<!-- 光标光晕 / 滚动进度 / 粒子背景 -->
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+<canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+<!-- 导航 -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="brand">小兔子<span class="dot">·</span>小狐狸</a>
+    <div class="nav-links">
+      <a href="#story">序章</a>
+      <a href="#chapters">章节</a>
+      <a href="#profiles">档案</a>
+      <a href="#quiz">问答</a>
+      <a href="#play">玩法</a>
+      <a class="nav-cta" href="game.html">开始游戏 →</a>
+    </div>
+    <a class="btn btn-primary btn-sm nav-mobile-cta" href="game.html">开始游戏</a>
+    <div class="nav-tools">
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="切换到夜间模式">🌙</button>
+      <button class="icon-btn" id="soundToggle" type="button" aria-label="开启音效">🔇</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="hero" id="top">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="celestial" aria-hidden="true"></div>
+
+  <p class="hero-eyebrow">森林手记 · 第一册</p>
+  <h1>小兔子与<em>小狐狸</em>的<br>森林手记</h1>
+  <p class="hero-lead" id="heroLead">森林深处，住着一只小兔子和它最要好的小狐狸朋友。</p>
+
+  <div class="hero-actions">
+    <a class="btn btn-primary" id="heroStart" href="game.html">写一本新的手记 →</a>
+    <a class="btn btn-ghost" href="#play">先看看怎么玩</a>
+  </div>
+
+  <div class="hero-friends">
+    <button class="char" id="bunnyChar" data-depth="1.1" type="button" aria-label="点击小兔子，听它说句话">
+      <span class="char-float char-art"></span>
+      <span class="char-tag">小兔子</span>
+    </button>
+
+    <div class="heart-sep" id="heartSep" aria-hidden="true"></div>
+
+    <button class="char" id="foxChar" data-depth="1.5" type="button" aria-label="点击小狐狸，听它说句话">
+      <span class="char-float char-art"></span>
+      <span class="char-tag">小狐狸</span>
+    </button>
+  </div>
+
+  <a class="scroll-cue" href="#story" aria-label="向下阅读"><span></span></a>
+</header>
+
+<!-- 序章 -->
+<section id="story">
+  <div class="wrap">
+    <div class="story-grid">
+      <div class="reveal">
+        <div class="section-head left">
+          <span class="eyebrow">序 · 它们</span>
+          <h2>一只胆小的兔子，<br>和一只嘴硬的小狐狸</h2>
+        </div>
+        <p class="story-p">森林的东边有一棵很老的橡树，树洞里住着一只小兔子。它把干草铺得很软，把蘑菇晒在窗台上，把每个清晨都过得很小心。</p>
+        <p class="story-p">小狐狸住在溪水的另一边。它走路带风，尾巴蓬松，森林里没有谁不知道它。可它总在傍晚绕远路，经过那棵老橡树。</p>
+        <p class="story-p">没有人知道它们是怎么成为朋友的。也许是一次躲雨，也许是一颗分着吃的浆果。总之从某一天起，森林里多了一对形影不离的身影。</p>
+        <p class="story-p">而现在，这一页可以由你来写：从初春到冬末，用二十八天，把「最要好的朋友」慢慢写成别的什么。</p>
+      </div>
+
+      <aside class="notebook reveal">
+        <p class="nb-date">手记 · 晴</p>
+        <p class="nb-line">今天它又把最大的那颗浆果推给我。</p>
+        <p class="nb-line">我说我不爱吃甜的。</p>
+        <p class="nb-line">它信了。</p>
+        <p class="nb-sign">—— 小狐狸</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 章节 -->
+<section id="chapters" class="alt">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">故事 · 四则</span>
+      <h2>森林手记</h2>
+      <p>翻开任意一页，看看它们今天经历了什么。</p>
+    </div>
+
+    <div class="chapters-panel reveal">
+      <div class="tabs" id="chapterTabs" role="tablist" aria-label="章节选择"></div>
+      <div class="chapter-body" id="chapterBody"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 档案 -->
+<section id="profiles">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">档案 · 两位</span>
+      <h2>性格不同，却刚刚好</h2>
+      <p>一个把心事写在耳朵上，一个把温柔藏在尾巴里。</p>
+    </div>
+    <div class="profile-grid" id="profileGrid"></div>
+  </div>
+</section>
+
+<!-- 问答 -->
+<section id="quiz" class="alt">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">互动 · 默契小考</span>
+      <h2>你有多了解它们？</h2>
+      <p>三道小题。全对的话，新的手记会多带两朵野花。</p>
+    </div>
+
+    <div class="quiz-shell reveal">
+      <div class="quiz-top">
+        <span class="quiz-progress" id="quizProgress">第 1 / 3 题</span>
+        <div class="quiz-bar"><div class="quiz-bar-fill" id="quizBarFill"></div></div>
+      </div>
+      <div id="quizStage"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 玩法 / 游戏入口 -->
+<section id="play">
+  <div class="wrap play-shell">
+    <div class="section-head reveal">
+      <span class="eyebrow">互动 · 四季之心</span>
+      <h2>这次，换你来写</h2>
+      <p>28 天、4 季、一场从朋友开始的恋爱养成。电脑和手机都能玩。</p>
+    </div>
+
+    <div class="play-banner reveal">
+      <h3>森林手记 · 四季之心</h3>
+      <p>扮演小兔子或小狐狸，用每天三格行动安排生活：散步、采集、写手记、送礼、邀约。心动与默契会一点点长出来，第 28 天，由你决定故事停在哪一页。</p>
+      <div class="play-btns">
+        <a class="btn btn-primary" id="playStartBtn" href="game.html">开始新的手记 →</a>
+        <a class="btn" id="playContinueBtn" href="game.html" hidden>继续上次的手记</a>
+        <a class="btn btn-ghost" href="#chapters">先重读四则故事</a>
+      </div>
+      <div class="play-status" id="playStatus">正在查看手记架……</div>
+    </div>
+
+    <div class="play-grid" id="playGrid"></div>
+    <p class="play-note">进度自动保存在本机浏览器 · 昼夜主题与音效可在右上角切换 · 无需联网</p>
+  </div>
+</section>
+
+<footer>
+  <p class="footer-mark">🐾</p>
+  <p>兔子与小狐狸 · 森林手记</p>
+  <p class="footer-note">双页结构 · 零外部依赖 · 支持昼夜切换与手机游玩</p>
+</footer>
+
+<!-- 对话气泡 -->
+<div class="speech-bubble" id="speechBubble" role="status" aria-live="polite"></div>
+
+<script src="assets/js/core.js"></script>
+<script src="assets/js/art.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>
+
