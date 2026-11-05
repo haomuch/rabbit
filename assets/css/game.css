@@ -89,7 +89,8 @@
 }
 .scene-char { animation: bob 5.2s ease-in-out infinite; }
 .scene-char svg { width: clamp(112px, 17vw, 168px); height: auto; filter: drop-shadow(0 14px 22px rgba(90, 70, 54, .2)); }
-.scene-char.me { transform: scale(.86); opacity: .92; animation-delay: -2.4s; }
+.scene-char.me { opacity: .92; animation-delay: -2.4s; }
+.scene-char.me svg { transform: scale(.86); transform-origin: bottom center; }
 .scene-char.target { animation-delay: -.6s; }
 .scene-heart { align-self: center; margin-bottom: 4.3rem; animation: heartbeat 2.2s ease-in-out infinite; }
 @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -156,7 +157,7 @@
 .ac-cost { font-size: .7rem; color: var(--text-soft); opacity: .85; }
 .ac-flag-inline {
   display: inline-block; margin-left: .35rem; vertical-align: middle;
-  font-size: .62rem; font-weight: 800; color: #fff; background: var(--accent);
+  font-size: .62rem; font-weight: 800; color: var(--on-accent); background: var(--accent);
   padding: .08rem .45rem; border-radius: 999px;
 }
 
@@ -200,8 +201,6 @@
 }
 .ov-close:hover { border-color: var(--accent); color: var(--accent); }
 .ov-actions { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1.3rem; }
-.ov-body { font-size: .9rem; line-height: 1.9; }
-.ov-body p { margin-bottom: .7rem; }
 .ov-note { font-size: .78rem; color: var(--text-soft); margin-top: .8rem; }
 
 /* 开场 */

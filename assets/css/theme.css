@@ -24,6 +24,7 @@
   --energy: #6faa8d;
   --ok: #5fa84f;
   --bad: #d96a6a;
+  --on-accent: #ffffff;
 }
 [data-theme="night"] {
   --bg: #12141c;
@@ -39,11 +40,12 @@
   --shadow-sm: 0 4px 14px rgba(0, 0, 0, .3);
   --shadow: 0 12px 34px rgba(0, 0, 0, .38);
   --nav-bg: rgba(18, 20, 28, .75);
+  --on-accent: #2b1a0d;
 }
 
 /* ========== 基础 ========== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; scrollbar-gutter: stable; }
 body {
   font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   background: var(--bg);
@@ -55,6 +57,8 @@ body {
 img, svg { display: block; }
 button { font-family: inherit; }
 a { color: inherit; }
+/* .btn 等组件的 display 会覆盖浏览器默认的 [hidden]{display:none}，这里补一条兜底 */
+[hidden] { display: none !important; }
 
 /* ========== 特效层 ========== */
 .cursor-glow {
@@ -103,10 +107,10 @@ body.has-pointer .cursor-glow { opacity: 1; }
 }
 .nav-links a:hover { color: var(--accent); background: var(--glow); }
 .nav-links a.nav-cta {
-  color: #fff; background: var(--accent); font-weight: 700;
+  color: var(--on-accent); background: var(--accent); font-weight: 700;
   box-shadow: 0 6px 16px rgba(224, 122, 63, .24);
 }
-.nav-links a.nav-cta:hover { background: var(--accent-2); color: #fff; }
+.nav-links a.nav-cta:hover { background: var(--accent-2); color: var(--on-accent); }
 .nav-tools { display: flex; gap: .45rem; }
 .icon-btn {
   width: 38px; height: 38px; display: grid; place-items: center;
@@ -130,7 +134,7 @@ body.has-pointer .cursor-glow { opacity: 1; }
 .btn:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
 .btn-primary {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #fff; border-color: transparent;
+  color: var(--on-accent); border-color: transparent;
   box-shadow: 0 10px 24px rgba(224, 122, 63, .26);
 }
 .btn-primary:hover { box-shadow: 0 14px 30px rgba(224, 122, 63, .36); }
@@ -180,6 +184,13 @@ section.alt { background: var(--bg-2); }
   width: 14px; height: 14px; margin-left: -7px; background: var(--surface);
   border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
   transform: rotate(45deg);
+}
+/* 气泡翻到角色下方时，箭头朝上、动画原点也跟着换到顶边 */
+.speech-bubble.is-below { transform-origin: top center; }
+.speech-bubble.is-below::after {
+  top: -7px; bottom: auto;
+  border-right: none; border-bottom: none;
+  border-left: 1px solid var(--line); border-top: 1px solid var(--line);
 }
 
 /* ========== 轻提示 ========== */

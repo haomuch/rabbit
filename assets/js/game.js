@@ -29,13 +29,21 @@
   };
 
   /* ---------------- 基础工具 ---------------- */
+  function isNewGameRequest() { return /(?:^|[?&])new=1(?:&|$)/.test(location.search); }
+  function clearNewGameRequest() {
+    try {
+      if (location.protocol !== "file:" && window.history && history.replaceState) {
+        history.replaceState(null, "", location.pathname + location.hash);
+      }
+    } catch (e) { /* file:// 下浏览器不允许改写地址，忽略即可 */ }
+  }
+  /* 未开局时（例如从开场界面打开玩法说明）用当前选中的视角兜底，避免 {{T}} 露在界面上 */
   function tpl(s) {
-    if (!state) return String(s == null ? "" : s);
-    var r = D.roles[state.role] || D.roles.bunny;
+    var r = D.roles[(state && state.role) || selectedRole] || D.roles.bunny;
     return String(s == null ? "" : s).replace(/\{\{T\}\}/g, r.target).replace(/\{\{M\}\}/g, r.me);
   }
   function season() { return D.seasons[clamp(Math.floor((state.day - 1) / 7), 0, 3)]; }
-  function role() { return D.roles[state.role] || D.roles.bunny; }
+  function role() { return D.roles[(state && state.role) || selectedRole] || D.roles.bunny; }
 
   function newState(roleKey) {
     var m = F.getMeta();
@@ -43,10 +51,10 @@
       v: 2, role: roleKey, day: 1, ap: 3,
       aff: 12, bond: 8, mood: 72, energy: 100,
       items: { berry: 2, mushroom: 1, wood: 0, flower: 0, stardust: 0 },
-      seenEvents: [], memories: [], tokens: [], trials: {}, diary: [], log: [],
-      gifts: 0, dates: 0, encounters: 0, flags: {},
-      ending: null, lastLine: "", dateDoneDay: 0,
-      startedAt: Date.now(), updatedAt: Date.now()
+      seenEvents: [], memories: [], tokens: [], diary: [], log: [],
+      gifts: 0, dates: 0, flags: {},
+      ending: null, lastLine: "",
+      updatedAt: Date.now()
     };
     if (m.quizPerfect) st.items.flower += 2;
     return st;
@@ -59,12 +67,10 @@
     if (!state.items) state.items = {};
     Object.keys(D.items).forEach(function (k) { state.items[k] = Math.max(0, Number(state.items[k]) || 0); });
     ["seenEvents", "memories", "tokens", "diary", "log"].forEach(function (k) { if (!Array.isArray(state[k])) state[k] = []; });
-    if (!state.trials || typeof state.trials !== "object") state.trials = {};
     if (!state.flags || typeof state.flags !== "object") state.flags = {};
     if (!state.role || !D.roles[state.role]) state.role = "bunny";
     if (typeof state.gifts !== "number") state.gifts = 0;
     if (typeof state.dates !== "number") state.dates = 0;
-    if (typeof state.dateDoneDay !== "number") state.dateDoneDay = 0;
   }
   function save() { normalize(); state.updatedAt = Date.now(); F.storage.set(F.SAVE_KEY, state); }
 
@@ -153,16 +159,70 @@
       "</div>" + (closeable === false ? "" : '<button class="ov-close" type="button" data-act="close" aria-label="关闭">✕</button>') +
       "</div>";
   }
+  /* 弹层：锁定页面滚动 + 焦点移入并在弹层内循环 + 关闭后还原焦点 */
+  var pageLocked = false, pageLockY = 0, lastFocus = null;
+
+  function lockPage() {
+    if (pageLocked) return;
+    pageLocked = true;
+    pageLockY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+  }
+  function unlockPage() {
+    if (!pageLocked) return;
+    pageLocked = false;
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
+    // 页面开了 scroll-behavior: smooth，复原位置时必须瞬时跳回
+    var prev = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = "auto";
+    window.scrollTo(0, pageLockY);
+    document.documentElement.style.scrollBehavior = prev;
+  }
+  function overlayFocusables() {
+    return util.qsa("a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex='-1'])", card)
+      .filter(function (el) { return el.getClientRects().length > 0; });
+  }
+  function focusIntoOverlay() {
+    var target = overlayFocusables()[0] || card;
+    try { target.focus({ preventScroll: true }); } catch (e) { try { target.focus(); } catch (e2) {} }
+  }
+  function restoreFocus() {
+    var el = lastFocus;
+    lastFocus = null;
+    if (el && el.focus && document.contains(el)) {
+      try { el.focus({ preventScroll: true }); } catch (e) {}
+    }
+  }
+  function trapTab(e) {
+    if (!overlay.classList.contains("show")) return;
+    var list = overlayFocusables();
+    if (!list.length) { e.preventDefault(); card.focus(); return; }
+    var first = list[0], last = list[list.length - 1];
+    var active = document.activeElement;
+    var inside = active !== card && card.contains(active);
+    if (e.shiftKey) {
+      if (!inside || active === first) { e.preventDefault(); last.focus(); }
+    } else if (!inside || active === last) {
+      e.preventDefault(); first.focus();
+    }
+  }
   function openOverlay(html, opts) {
     opts = opts || {};
     destroyMini();
+    if (!pageLocked) { lastFocus = document.activeElement; lockPage(); }
     card.className = "overlay-card" + (opts.wide ? " wide" : "");
     card.innerHTML = html;
+    var titleEl = card.querySelector(".ov-title") || card.querySelector("h2") || card.querySelector("h3");
+    if (titleEl) card.setAttribute("aria-label", titleEl.textContent.trim());
+    else card.removeAttribute("aria-label");
     overlayLocked = !!opts.locked;
     overlayOnClose = opts.onClose || null;
     overlay.classList.add("show");
     overlay.setAttribute("aria-hidden", "false");
     card.scrollTop = 0;
+    focusIntoOverlay();
   }
   function closeOverlay(force) {
     if (overlayLocked && !force) return;
@@ -174,6 +234,8 @@
     var cb = overlayOnClose;
     overlayOnClose = null;
     if (cb) cb();
+    // 回调可能立刻重新打开弹层（回忆册 → 结局页），这时不要解锁
+    if (!overlay.classList.contains("show")) { unlockPage(); restoreFocus(); }
   }
 
   /* ---------------- 空状态 ---------------- */
@@ -290,16 +352,21 @@
   }
 
   /* ---------------- 渲染：行动卡 ---------------- */
+  /* 每季只有一场专属邀约：该季的邀约事件读过之后就不再可选 */
+  function seasonDateUsed(seasonId) {
+    var pool = D.dates.filter(function (d) { return d.season === seasonId; });
+    return pool.length > 0 && pool.every(function (d) { return state.seenEvents.indexOf(d.id) >= 0; });
+  }
   function actionStatus(a, s) {
     if (state.ending) return { ok: false, why: "这一本已经写完啦" };
+    if (a.special === "date") {
+      var cost = D.dateCost[s.id] || {};
+      if (seasonDateUsed(s.id)) return { ok: false, why: "这一季已经约过啦" };
+      if (!hasItems(cost)) return { ok: false, why: "需要 " + costText(cost) };
+    }
     if (state.ap < a.ap) return { ok: false, why: "行动点不够" };
     if (a.energy && state.energy < a.energy) return { ok: false, why: "体力不够，先歇一会儿" };
     if (a.special === "gift" && !anyItems()) return { ok: false, why: "背包空空的" };
-    if (a.special === "date") {
-      var cost = D.dateCost[s.id] || {};
-      if (state.dateDoneDay === state.day) return { ok: false, why: "今天已经约过啦" };
-      if (!hasItems(cost)) return { ok: false, why: "需要 " + costText(cost) };
-    }
     return { ok: true, why: "" };
   }
   function renderActions() {
@@ -349,21 +416,27 @@
   /* ---------------- 开场 ---------------- */
   function showStart() {
     var save = F.getSave(F.SAVE_KEY);
-    var alive = save && save.v === 2 && !save.ending;
+    var alive = !!(save && save.v === 2 && !save.ending);
     var rolesHtml = Object.keys(D.roles).map(function (k) {
       var r = D.roles[k];
       return '<button class="role-card' + (k === selectedRole ? " is-active" : "") + '" type="button" data-act="role" data-role="' + k + '">' +
         '<div class="rc-icon">' + r.icon + '</div><div class="rc-name">扮演 ' + esc(r.me) + "</div>" +
         '<div class="rc-desc">和' + esc(r.target) + "写一本手记<br>" + esc(r.desc) + "</div></button>";
     }).join("");
+    var warn = isNewGameRequest() && alive
+      ? '<p class="ov-note" style="color:var(--bad)">开始新的一本会覆盖第 ' + Number(save.day) +
+        " 天的进度；回忆册、成就与已解锁的结局会保留。</p>"
+      : "";
     var html =
       '<div class="start-hero"><div class="sh-mark">🌳</div><h2>森林手记 · 四季之心</h2>' +
       '<p>从初春到冬末，二十八天，每天三格行动力。把「最要好的朋友」，慢慢写成别的什么。</p></div>' +
       '<div class="role-grid">' + rolesHtml + "</div>" +
+      warn +
       '<div class="ov-actions">' +
         '<button class="btn btn-primary btn-block" type="button" data-act="new">开始写第一页 →</button>' +
-        (alive ? '<button class="btn btn-block" type="button" data-act="continue">继续第 ' + save.day + " 天</button>" : "") +
+        (alive ? '<button class="btn btn-block" type="button" data-act="continue">继续第 ' + Number(save.day) + " 天</button>" : "") +
         '<button class="btn btn-ghost btn-block" type="button" data-act="help-start">先看看玩法</button>' +
+        '<a class="btn btn-ghost btn-block" href="index.html">先不写，回首页</a>' +
       "</div>" +
       '<p class="ov-note">进度自动保存在本机 · 昼夜主题与音效在右上角切换 · 电脑和手机都能玩</p>';
     openOverlay(html, { locked: true });
@@ -371,6 +444,7 @@
   function startNew(roleKey) {
     state = newState(roleKey);
     meta = F.getMeta();
+    clearNewGameRequest();
     save(); syncAchievements(); render();
     closeOverlay(true);
     F.audio.sfx("page");
@@ -431,7 +505,6 @@
       if (Math.random() < 0.42) {
         var en = util.pick(D.encounters);
         applyGain(en.gain);
-        state.encounters++;
         var txt = tpl(en.text);
         state.log.push(txt);
         notes.push(txt);
@@ -483,7 +556,6 @@
     state.ap -= a.ap;
     state.energy = clamp(state.energy - a.energy, 0, 100);
     state.dates++;
-    state.dateDoneDay = state.day;
     var pool = D.dates.filter(function (d) { return d.season === s.id; });
     var unseen = pool.filter(function (d) { return state.seenEvents.indexOf(d.id) < 0; });
     var ev = unseen.length ? unseen[0] : util.pick(pool);
@@ -615,8 +687,8 @@
   /* ---------------- 季末考验 ---------------- */
   function runTrial(s, cb) {
     var tr = D.trials[s.id];
-    trialCtx = { s: s, tr: tr, cb: cb, phase: "intro" };
-    var html = ovHead("季末考验 · " + s.title, tr.icon + " " + tr.title) +
+    trialCtx = { s: s, tr: tr, cb: cb };
+    var html = ovHead("季末考验 · " + s.title, tr.icon + " " + tr.title, null, false) +
       '<p class="ov-sub">' + esc(tpl(tr.intro)) + "</p>" +
       '<div class="ov-actions"><button class="btn btn-primary" type="button" data-act="trial-start">开始考验 →</button>' +
       '<button class="btn" type="button" data-act="trial-skip">这次先跳过</button></div>' +
@@ -625,7 +697,6 @@
   }
   function startTrialMini() {
     if (!trialCtx) return;
-    trialCtx.phase = "playing";
     var html = ovHead("季末考验", trialCtx.tr.icon + " " + trialCtx.tr.title, null, false) +
       '<div id="miniRoot"></div>';
     openOverlay(html, { locked: true, wide: true });
@@ -637,7 +708,6 @@
   }
   function showTrialResult(res) {
     if (!trialCtx) return;
-    trialCtx.phase = "result";
     var tr = trialCtx.tr, s = trialCtx.s;
     var deltas, items = {};
     if (res.win) {
@@ -645,7 +715,6 @@
       items = { stardust: 1 };
       addItems(items);
       if (state.tokens.indexOf(s.id) < 0) state.tokens.push(s.id);
-      state.trials[s.id] = "win";
       addMemory("t_" + s.id);
       state.lastLine = tpl(tr.win);
       F.audio.sfx("win");
@@ -681,8 +750,6 @@
   }
   function trialSkip() {
     if (!trialCtx) return;
-    state.trials[trialCtx.s.id] = trialCtx.phase === "intro" ? "skip" : "lose";
-    syncAchievements();
     toast("这一季的信物留在了风里", "warn");
     trialNext();
   }
@@ -696,7 +763,6 @@
     state.energy = clamp(state.energy + 22, 0, 100);
     state.mood = clamp(state.mood + 4, 0, 100);
     state.log = [];
-    state.dateDoneDay = 0;
     if ((state.day - 1) % 7 === 0) {
       var s = season();
       state.lastLine = s.title + "，" + s.poem;
@@ -717,11 +783,7 @@
     state.lastLine = tpl(end.quote);
     meta = F.getMeta();
     if (meta.endings.indexOf(end.id) < 0) meta.endings.push(end.id);
-    F.patchMeta({
-      endings: meta.endings,
-      bestAff: Math.max(meta.bestAff || 0, state.aff),
-      totalDays: (meta.totalDays || 0) + 28
-    });
+    F.patchMeta({ endings: meta.endings });
     syncAchievements();
     save(); render();
     renderEndingOverlay();
@@ -861,7 +923,10 @@
     $("resetBtn").addEventListener("click", function () { F.audio.sfx("tap"); confirmReset(); });
 
     overlay.addEventListener("click", function (e) { if (e.target === overlay) closeOverlay(); });
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeOverlay(); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") { closeOverlay(); return; }
+      if (e.key === "Tab") trapTab(e);
+    });
     document.addEventListener("click", function (e) {
       var btn = e.target && e.target.closest ? e.target.closest("[data-act]") : null;
       if (!btn || btn.disabled) return;
@@ -871,13 +936,14 @@
     var saved = F.getSave(F.SAVE_KEY);
     if (saved && saved.v === 2) {
       state = saved;
-      normalize(); save(); render();
+      normalize();
       if (state.ending) {
         lastEnding = D.endings.filter(function (x) { return x.id === state.ending; })[0] || D.endings[D.endings.length - 1];
-        renderEndingOverlay();
-      } else {
-        toast("欢迎回来 · 第 " + state.day + " 天", "good");
       }
+      save(); render();
+      if (isNewGameRequest()) { showStart(); return; }
+      if (state.ending) renderEndingOverlay();
+      else toast("欢迎回来 · 第 " + state.day + " 天", "good");
     } else {
       renderEmpty();
       showStart();

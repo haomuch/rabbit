@@ -2,6 +2,7 @@
 <html lang="zh-CN" data-theme="day">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#fdf7ee">
 <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
@@ -75,7 +76,7 @@
   <p class="hero-lead" id="heroLead">森林深处，住着一只小兔子和它最要好的小狐狸朋友。</p>
 
   <div class="hero-actions">
-    <a class="btn btn-primary" id="heroStart" href="game.html">写一本新的手记 →</a>
+    <a class="btn btn-primary" id="heroStart" href="game.html?new=1">写一本新的手记 →</a>
     <a class="btn btn-ghost" href="#play">先看看怎么玩</a>
   </div>
 
@@ -182,7 +183,7 @@
       <h3>森林手记 · 四季之心</h3>
       <p>扮演小兔子或小狐狸，用每天三格行动安排生活：散步、采集、写手记、送礼、邀约。心动与默契会一点点长出来，第 28 天，由你决定故事停在哪一页。</p>
       <div class="play-btns">
-        <a class="btn btn-primary" id="playStartBtn" href="game.html">开始新的手记 →</a>
+        <a class="btn btn-primary" id="playStartBtn" href="game.html?new=1">开始新的手记 →</a>
         <a class="btn" id="playContinueBtn" href="game.html" hidden>继续上次的手记</a>
         <a class="btn btn-ghost" href="#chapters">先重读四则故事</a>
       </div>
@@ -196,7 +197,7 @@
 
 <footer>
   <p class="footer-mark">🐾</p>
-  <p>兔子与小狐狸 · 森林手记</p>
+  <p>小兔子与小狐狸 · 森林手记</p>
   <p class="footer-note">双页结构 · 零外部依赖 · 支持昼夜切换与手机游玩</p>
 </footer>
 
@@ -207,6 +208,13 @@
 <script src="assets/js/art.js"></script>
 <script src="assets/js/data.js"></script>
 <script src="assets/js/site.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch((e) => {
+      console.log('Service Worker 注册失败:', e);
+    });
+  }
+</script>
 </body>
 </html>
 

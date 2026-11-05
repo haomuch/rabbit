@@ -22,22 +22,22 @@
   var seasons = [
     {
       id: "spring", name: "春", title: "第一季 · 春", subtitle: "雨后的蘑菇", icon: "🌸",
-      days: "第 1 – 7 天", poem: "雨停之后，森林开始发芽。", color: "#f2a5a5",
+      poem: "雨停之后，森林开始发芽。",
       sky: "linear-gradient(180deg,#dceff5 0%,#fdf1e2 60%,#fdf7ee 100%)"
     },
     {
       id: "summer", name: "夏", title: "第二季 · 夏", subtitle: "溪边的石头", icon: "☀️",
-      days: "第 8 – 14 天", poem: "溪水涨了一点，蝉声铺满整个下午。", color: "#e8c06a",
+      poem: "溪水涨了一点，蝉声铺满整个下午。",
       sky: "linear-gradient(180deg,#cfeaf0 0%,#f8f0d8 62%,#fdf7ee 100%)"
     },
     {
       id: "autumn", name: "秋", title: "第三季 · 秋", subtitle: "打翻的果酱", icon: "🍁",
-      days: "第 15 – 21 天", poem: "叶子开始写信，风替它们投递。", color: "#d98b52",
+      poem: "叶子开始写信，风替它们投递。",
       sky: "linear-gradient(180deg,#f6e2c8 0%,#fbeedc 58%,#fdf7ee 100%)"
     },
     {
       id: "winter", name: "冬", title: "第四季 · 冬", subtitle: "冬夜的火炉", icon: "❄️",
-      days: "第 22 – 28 天", poem: "雪落得很轻，炉火替人说着话。", color: "#9fb7d0",
+      poem: "雪落得很轻，炉火替人说着话。",
       sky: "linear-gradient(180deg,#dfe9f3 0%,#f2eee8 62%,#fdf7ee 100%)"
     }
   ];
@@ -172,11 +172,11 @@
 
   /* ---------------- 物品 / 行动 ---------------- */
   var items = {
-    berry:    { name: "浆果", icon: "🍓", love: 7,  note: "酸甜刚好，是森林里最不容易出错的礼物。", react: "{{T}}盯着果子看了两秒：「我不爱吃甜的。」……可它连果蒂都吃干净了。" },
-    mushroom: { name: "蘑菇", icon: "🍄", love: 4,  note: "晒干之后能存很久，雨天的好伙伴。", react: "{{T}}把蘑菇摆在窗台上：「晒得不错，勉强及格。」尾巴却轻轻晃了一下。" },
-    wood:     { name: "木柴", icon: "🌲", love: 3,  note: "冬夜炉火要用，捆得整整齐齐。", react: "{{T}}接过去掂了掂：「挺沉。放着吧，我来劈。」" },
-    flower:   { name: "野花", icon: "🌼", love: 9,  note: "溪边随手采的，带着一点风的味道。", react: "{{T}}别过脸去：「……花就花吧，插哪儿？」耳朵尖红了一小片。" },
-    stardust: { name: "星砂", icon: "✨", love: 12, note: "只在很晴的夜里，落在写满字的手记上。", react: "{{T}}没说话，只是把那一点光拢在掌心，很久都没松开。" }
+    berry:    { name: "浆果", icon: "🍓", love: 7, react: "{{T}}盯着果子看了两秒：「我不爱吃甜的。」……可它连果蒂都吃干净了。" },
+    mushroom: { name: "蘑菇", icon: "🍄", love: 4, react: "{{T}}把蘑菇摆在窗台上：「晒得不错，勉强及格。」尾巴却轻轻晃了一下。" },
+    wood:     { name: "木柴", icon: "🌲", love: 3, react: "{{T}}接过去掂了掂：「挺沉。放着吧，我来劈。」" },
+    flower:   { name: "野花", icon: "🌼", love: 9, react: "{{T}}别过脸去：「……花就花吧，插哪儿？」耳朵尖红了一小片。" },
+    stardust: { name: "星砂", icon: "✨", love: 12, react: "{{T}}没说话，只是把那一点光拢在掌心，很久都没松开。" }
   };
 
   var actions = [
@@ -215,28 +215,28 @@
 
   /* ---------------- 回忆卡 ---------------- */
   var memories = {
-    m_first:       { title: "搬来的第一天", icon: "🌱", season: "spring", text: "老橡树的树洞换了主人，而有人比风更早知道。" },
-    m_rain:        { title: "雨中的蘑菇", icon: "🍄", season: "spring", text: "红伞底下很挤，可是没有人想往外挪。" },
-    m_window:      { title: "窗台上的蘑菇干", icon: "🏠", season: "spring", text: "修好的窗台从此只晒两排蘑菇，一排给你，一排给它。" },
-    m_night:       { title: "怕黑的耳朵", icon: "✨", season: "spring", text: "萤火虫排成一条很淡的路，一直亮到树洞口。" },
-    d_spring:      { title: "红伞下的野餐", icon: "🧺", season: "spring", text: "雨又下起来，这次谁都没急着回家。" },
-    m_summer_open: { title: "溪水涨了", icon: "💧", season: "summer", text: "石头只露出一点点，像一串没写完的省略号。" },
-    m_stone:       { title: "溪边的石头", icon: "⛰️", season: "summer", text: "「踩这块，再踩那块。」它每一步都回头。" },
-    m_whistle:     { title: "口琴与午后", icon: "🎶", season: "summer", text: "曲子跑调了三次，蝉声替它圆了场。" },
-    m_thunder:     { title: "午后的雷雨", icon: "⛈️", season: "summer", text: "雷声很大，可有人先把窗户关好了。" },
-    d_summer:      { title: "对岸的野莓", icon: "🍓", season: "summer", text: "过了溪才发现，最好的一丛长在回头的路上。" },
-    m_autumn_open: { title: "第一片落叶", icon: "🍂", season: "autumn", text: "叶子落在手记里，被顺手夹成了书签。" },
-    m_jam:         { title: "打翻的果酱", icon: "🍯", season: "autumn", text: "「一份给你，一份给我，这样谁都没少吃。」" },
-    m_leafletter:  { title: "写在叶子上的信", icon: "✉️", season: "autumn", text: "有些话不好意思说，就交给风去送。" },
-    d_autumn:      { title: "烤蘑菇的黄昏", icon: "🔥", season: "autumn", text: "烟往上飘，两个影子在墙上靠得很近。" },
-    m_winter_open: { title: "初雪", icon: "❄️", season: "winter", text: "门口的脚印一大一小，来的时候是一串，走的时候还是一串。" },
-    m_stove:       { title: "冬夜的火炉", icon: "🌲", season: "winter", text: "尾巴铺在椅子边，像一条不用说的晚安。" },
-    m_tree:        { title: "星空下的树苗", icon: "🌳", season: "winter", text: "树还很小，约定已经长得比谁都高。" },
-    d_winter:      { title: "雪人的围巾", icon: "🧣", season: "winter", text: "围巾给了雪人，手套给了你，它自己把手插进尾巴里。" },
-    t_spring:      { title: "春之信物 · 花瓣书签", icon: "🌸", season: "spring", text: "接住的花瓣夹进手记第一页。" },
-    t_summer:      { title: "夏之信物 · 溪石", icon: "⛰️", season: "summer", text: "那块最稳的石头，被擦得亮亮的。" },
-    t_autumn:      { title: "秋之信物 · 果酱瓶", icon: "🍯", season: "autumn", text: "空瓶子留下来了，标签上写着两个人的名字。" },
-    t_winter:      { title: "冬之信物 · 火星", icon: "🔥", season: "winter", text: "炉火没灭，一直亮到天明。" }
+    m_first:       { title: "搬来的第一天", icon: "🌱", text: "老橡树的树洞换了主人，而有人比风更早知道。" },
+    m_rain:        { title: "雨中的蘑菇", icon: "🍄", text: "红伞底下很挤，可是没有人想往外挪。" },
+    m_window:      { title: "窗台上的蘑菇干", icon: "🏠", text: "修好的窗台从此只晒两排蘑菇，一排给你，一排给它。" },
+    m_night:       { title: "怕黑的耳朵", icon: "✨", text: "萤火虫排成一条很淡的路，一直亮到树洞口。" },
+    d_spring:      { title: "红伞下的野餐", icon: "🧺", text: "雨又下起来，这次谁都没急着回家。" },
+    m_summer_open: { title: "溪水涨了", icon: "💧", text: "石头只露出一点点，像一串没写完的省略号。" },
+    m_stone:       { title: "溪边的石头", icon: "⛰️", text: "「踩这块，再踩那块。」它每一步都回头。" },
+    m_whistle:     { title: "口琴与午后", icon: "🎶", text: "曲子跑调了三次，蝉声替它圆了场。" },
+    m_thunder:     { title: "午后的雷雨", icon: "⛈️", text: "雷声很大，可有人先把窗户关好了。" },
+    d_summer:      { title: "对岸的野莓", icon: "🍓", text: "过了溪才发现，最好的一丛长在回头的路上。" },
+    m_autumn_open: { title: "第一片落叶", icon: "🍂", text: "叶子落在手记里，被顺手夹成了书签。" },
+    m_jam:         { title: "打翻的果酱", icon: "🍯", text: "「一份给你，一份给我，这样谁都没少吃。」" },
+    m_leafletter:  { title: "写在叶子上的信", icon: "✉️", text: "有些话不好意思说，就交给风去送。" },
+    d_autumn:      { title: "烤蘑菇的黄昏", icon: "🔥", text: "烟往上飘，两个影子在墙上靠得很近。" },
+    m_winter_open: { title: "初雪", icon: "❄️", text: "门口的脚印一大一小，来的时候是一串，走的时候还是一串。" },
+    m_stove:       { title: "冬夜的火炉", icon: "🌲", text: "尾巴铺在椅子边，像一条不用说的晚安。" },
+    m_tree:        { title: "星空下的树苗", icon: "🌳", text: "树还很小，约定已经长得比谁都高。" },
+    d_winter:      { title: "雪人的围巾", icon: "🧣", text: "围巾给了雪人，手套给了你，它自己把手插进尾巴里。" },
+    t_spring:      { title: "春之信物 · 花瓣书签", icon: "🌸", text: "接住的花瓣夹进手记第一页。" },
+    t_summer:      { title: "夏之信物 · 溪石", icon: "⛰️", text: "那块最稳的石头，被擦得亮亮的。" },
+    t_autumn:      { title: "秋之信物 · 果酱瓶", icon: "🍯", text: "空瓶子留下来了，标签上写着两个人的名字。" },
+    t_winter:      { title: "冬之信物 · 火星", icon: "🔥", text: "炉火没灭，一直亮到天明。" }
   };
 
   /* ---------------- 剧情事件 ----------------
@@ -253,7 +253,7 @@
     /* ===== 春 ===== */
     {
       id: "s1_open", season: "spring", dayMin: 1, dayMax: 1, pinned: true,
-      title: "搬来的第一天", icon: "🌱", mood: "shy", memory: "m_first",
+      title: "搬来的第一天", icon: "🌱", memory: "m_first",
       lines: [
         N("老橡树的树洞换了新的干草。你把最后一只箱子推进门，抬头时，溪水那边的风正好吹过来。"),
         N("{{T}}站在三步之外，手里拎着一把不知道该往哪儿放的东西，看上去已经站了很久。"),
@@ -268,7 +268,7 @@
     },
     {
       id: "s1_rain", season: "spring", dayMin: 2, dayMax: 7,
-      title: "雨中的蘑菇", icon: "🍄", mood: "shy", memory: "m_rain",
+      title: "雨中的蘑菇", icon: "🍄", memory: "m_rain",
       lines: [
         N("雨来得毫无预告。你抱着一小篮东西钻进路边那朵巨大的红蘑菇下面，脚边很快汇成一条细溪。"),
         N("森林在雨里变得陌生，连回家的路都模糊了。然后，一抹熟悉的颜色穿过雨幕。"),
@@ -283,7 +283,7 @@
     },
     {
       id: "s1_window", season: "spring", dayMin: 3, dayMax: 7,
-      title: "窗台上的蘑菇干", icon: "🏠", mood: "normal", memory: "m_window",
+      title: "窗台上的蘑菇干", icon: "🏠", memory: "m_window",
       lines: [
         N("雨停后，窗台上那排蘑菇干受潮了。你正踮着脚够最上面一片，身后传来一声轻咳。"),
         T("「够不着就说。摔了还得多养几天。」"),
@@ -297,7 +297,7 @@
     },
     {
       id: "s1_night", season: "spring", dayMin: 5, dayMax: 7, minAff: 22,
-      title: "怕黑的耳朵", icon: "✨", mood: "shy", memory: "m_night",
+      title: "怕黑的耳朵", icon: "✨", memory: "m_night",
       lines: [
         N("入夜后森林黑得很彻底。你抱着灯站在树洞口，迟迟没迈出去。"),
         N("草丛里亮起一点、两点、好几十点光，慢慢连成一条淡黄的路。"),
@@ -312,7 +312,7 @@
     },
     {
       id: "s1_generic", season: "spring", repeatable: true,
-      title: "寻常的一页", icon: "🌿", mood: "normal",
+      title: "寻常的一页", icon: "🌿",
       variants: [
         [ N("春天的雨说来就来，说停也停。你把窗台擦了第三遍，{{T}}撑着一片叶子从门口经过。"), T("「今天的云长得像蘑菇。」") ],
         [ N("老橡树抽了新芽。你在树洞口发现一小捆扎好的干草，没有署名，草上还带着溪水的凉气。"), N("远处，{{T}}的尾巴一闪就不见了。") ],
@@ -327,7 +327,7 @@
     /* ===== 夏 ===== */
     {
       id: "s2_open", season: "summer", dayMin: 8, dayMax: 8, pinned: true,
-      title: "溪水涨了", icon: "💧", mood: "normal", memory: "m_summer_open",
+      title: "溪水涨了", icon: "💧", memory: "m_summer_open",
       lines: [
         N("一夜的雨让溪水涨了半掌。原先能踩的石头只剩一个个圆圆的顶，像一串没写完的省略号。"),
         N("你蹲在岸边数石头，{{T}}已经站到了最稳的那一块上，回头看你。"),
@@ -341,7 +341,7 @@
     },
     {
       id: "s2_stone", season: "summer", dayMin: 9, dayMax: 14,
-      title: "溪边的石头", icon: "⛰️", mood: "happy", memory: "m_stone",
+      title: "溪边的石头", icon: "⛰️", memory: "m_stone",
       lines: [
         N("溪水不深，可石头很滑。你在岸边试探了好几次，都不敢迈出第一步。"),
         N("{{T}}已经跳到对岸了，回头看了你一眼，又一步一步跳了回来。"),
@@ -356,7 +356,7 @@
     },
     {
       id: "s2_whistle", season: "summer", dayMin: 11, dayMax: 14, minAff: 32,
-      title: "口琴与午后", icon: "🎶", mood: "happy", memory: "m_whistle",
+      title: "口琴与午后", icon: "🎶", memory: "m_whistle",
       lines: [
         N("蝉声铺满整个下午。{{T}}靠在树干上吹口琴，曲子跑了三次调，每次都从同一个地方重来。"),
         T("「……这首还没练熟。别笑。」"),
@@ -370,7 +370,7 @@
     },
     {
       id: "s2_thunder", season: "summer", dayMin: 12, dayMax: 14,
-      title: "午后的雷雨", icon: "⛈️", mood: "shy", memory: "m_thunder",
+      title: "午后的雷雨", icon: "⛈️", memory: "m_thunder",
       lines: [
         N("雷声从山那边滚过来。你想起窗台还敞着，急着往回跑，却看见屋里的灯已经亮了。"),
         N("{{T}}站在门边，窗关得严严实实，爪子上还沾着一点水。"),
@@ -384,7 +384,7 @@
     },
     {
       id: "s2_generic", season: "summer", repeatable: true,
-      title: "漫长的一页", icon: "🍉", mood: "normal",
+      title: "漫长的一页", icon: "🍉",
       variants: [
         [ N("日头很足，{{T}}把一片大叶子折成帽子扣在你头上，自己躲在影子里。"), T("「我本来就不怕晒。」") ],
         [ N("溪里有鱼蹭过脚背。你没忍住笑出声，{{T}}立刻往水里看：「什么？」"), Y("「没什么。」") ],
@@ -399,7 +399,7 @@
     /* ===== 秋 ===== */
     {
       id: "s3_open", season: "autumn", dayMin: 15, dayMax: 15, pinned: true,
-      title: "第一片落叶", icon: "🍂", mood: "normal", memory: "m_autumn_open",
+      title: "第一片落叶", icon: "🍂", memory: "m_autumn_open",
       lines: [
         N("早上推门，第一片黄叶正好落在摊开的手记上，边缘有点卷，像谁写坏了一行字。"),
         N("{{T}}抱着一捆柴从林子里出来，看见那片叶子，停了一下。"),
@@ -414,7 +414,7 @@
     },
     {
       id: "s3_jam", season: "autumn", dayMin: 16, dayMax: 21,
-      title: "打翻的果酱", icon: "🍯", mood: "shy", memory: "m_jam",
+      title: "打翻的果酱", icon: "🍯", memory: "m_jam",
       lines: [
         N("罐子从桌沿滚下去，最后一整罐浆果酱扣在了木地板上。你愣在原地，有点心疼，也有点想哭。"),
         N("{{T}}却蹲下来，用干净的木片把还能吃的部分小心拢进两只小碗，推了一碗给你。"),
@@ -429,7 +429,7 @@
     },
     {
       id: "s3_leafletter", season: "autumn", dayMin: 18, dayMax: 21, minAff: 48,
-      title: "写在叶子上的信", icon: "✉️", mood: "shy", memory: "m_leafletter",
+      title: "写在叶子上的信", icon: "✉️", memory: "m_leafletter",
       lines: [
         N("风把一片很大的枫叶吹到门口。你用细枝在叶脉之间写了几个字，想了想，又把它放回风里。"),
         N("傍晚，{{T}}捏着那片叶子出现在树洞口，耳朵压得很低。"),
@@ -444,7 +444,7 @@
     },
     {
       id: "s3_generic", season: "autumn", repeatable: true,
-      title: "金黄的一页", icon: "🌰", mood: "normal",
+      title: "金黄的一页", icon: "🌰",
       variants: [
         [ N("林子里全是踩碎叶子的声音。{{T}}走在前头，忽然回头：「跟紧了，落叶底下的路会骗人。」") ],
         [ N("你在柴堆旁发现几颗摆得整整齐齐的栗子，旁边压着一小片写着「别一次吃完」的树皮。") ],
@@ -459,7 +459,7 @@
     /* ===== 冬 ===== */
     {
       id: "s4_open", season: "winter", dayMin: 22, dayMax: 22, pinned: true,
-      title: "初雪", icon: "❄️", mood: "happy", memory: "m_winter_open",
+      title: "初雪", icon: "❄️", memory: "m_winter_open",
       lines: [
         N("第一场雪来得比谁都早。推门时，世界被擦得干干净净，只剩门口一串脚印。"),
         N("一大一小，来的时候是一串，走的时候还是一串——因为{{T}}一直踩在你踩过的地方。"),
@@ -474,7 +474,7 @@
     },
     {
       id: "s4_stove", season: "winter", dayMin: 23, dayMax: 28,
-      title: "冬夜的火炉", icon: "🌲", mood: "sleep", memory: "m_stove",
+      title: "冬夜的火炉", icon: "🌲", memory: "m_stove",
       lines: [
         N("炉火噼啪作响，窗玻璃结了一层薄霜。你把爪子凑近火边，还是忍不住发抖。"),
         N("{{T}}什么也没说，只是把蓬松的尾巴铺在椅子旁边，像一条暖和的毯子。"),
@@ -489,7 +489,7 @@
     },
     {
       id: "s4_tree", season: "winter", dayMin: 26, dayMax: 28, minAff: 62,
-      title: "星空下的树苗", icon: "🌳", mood: "love", memory: "m_tree",
+      title: "星空下的树苗", icon: "🌳", memory: "m_tree",
       lines: [
         N("雪停的那晚，星星亮得不像话。{{T}}在院子里挖了个小坑，放进一棵细细的树苗。"),
         T("「你负责浇水。我负责……不让它被风折断。」"),
@@ -504,7 +504,7 @@
     },
     {
       id: "s4_generic", season: "winter", repeatable: true,
-      title: "围炉的一页", icon: "☕", mood: "sleep",
+      title: "围炉的一页", icon: "☕",
       variants: [
         [ N("雪下了一整天。{{T}}把柴一根根码好，忽然说：「其实冬天也不算太坏。」") ],
         [ N("手记快写满了。你翻回第一页，发现那一页的角落里，有人用很淡的笔迹画了两只耳朵。") ],
@@ -520,7 +520,7 @@
   /* ---------------- 专属邀约 ---------------- */
   var dates = [
     {
-      id: "d_spring", season: "spring", title: "红伞下的野餐", icon: "🧺", mood: "happy", memory: "d_spring", type: "date",
+      id: "d_spring", season: "spring", title: "红伞下的野餐", icon: "🧺", memory: "d_spring",
       lines: [
         N("你带着一小篮晒好的蘑菇，把{{T}}约到了那朵巨大的红蘑菇下面。"),
         N("野餐布刚铺开，雨又淅淅沥沥落下来。它习惯性地张开尾巴，你却先撑起了一把小小的伞。"),
@@ -534,7 +534,7 @@
       ]
     },
     {
-      id: "d_summer", season: "summer", title: "对岸的野莓", icon: "🍓", mood: "happy", memory: "d_summer", type: "date",
+      id: "d_summer", season: "summer", title: "对岸的野莓", icon: "🍓", memory: "d_summer",
       lines: [
         N("两颗浆果换一次过溪的勇气。{{T}}在前头数着石头，你在后头数它的脚步。"),
         N("对岸的野莓比想象中更甜，也比方才在岸边看见的更远。"),
@@ -548,7 +548,7 @@
       ]
     },
     {
-      id: "d_autumn", season: "autumn", title: "烤蘑菇的黄昏", icon: "🔥", mood: "shy", memory: "d_autumn", type: "date",
+      id: "d_autumn", season: "autumn", title: "烤蘑菇的黄昏", icon: "🔥", memory: "d_autumn",
       lines: [
         N("一朵野花换一个黄昏。你把花插在空瓶里，{{T}}把蘑菇串在细枝上，架在小小的火堆边。"),
         N("烟往上飘，两个影子在墙上靠得很近，近到分不出谁的耳朵在抖。"),
@@ -561,7 +561,7 @@
       ]
     },
     {
-      id: "d_winter", season: "winter", title: "雪人的围巾", icon: "🧣", mood: "love", memory: "d_winter", type: "date",
+      id: "d_winter", season: "winter", title: "雪人的围巾", icon: "🧣", memory: "d_winter",
       lines: [
         N("两捆木柴换一整个雪夜。你们在院子里堆了个歪歪扭扭的雪人，鼻子树枝还是{{T}}挑的。"),
         N("围巾给了雪人，手套给了你，它自己把手插进尾巴里，嘴上说着不冷。"),
@@ -612,7 +612,9 @@
     }
   };
 
-  /* ---------------- 结局 ---------------- */
+  /* ---------------- 结局 ----------------
+     判定按数组顺序取第一个命中项。心动/默契在一次完整流程里必然封顶，
+     因此档位由信物、邀约、送礼这些玩家真正可控的进度区分，五种都能抵达。 */
   var endings = [
     {
       id: "secret", icon: "✨", title: "四季之外", badge: "隐藏结局",
@@ -646,7 +648,7 @@
         "你把手记翻到空白的一页，写下明年的第一句话。"
       ],
       quote: "「嗯，不搬了。」",
-      test: function (s) { return s.aff >= 60; }
+      test: function (s) { return s.aff >= 60 && (s.tokens.length >= 2 || s.dates >= 2 || s.gifts >= 4); }
     },
     {
       id: "friend", icon: "🍃", title: "最好的朋友", badge: "友情结局",
@@ -657,7 +659,7 @@
         "这样也很好。有些故事，不必翻到最后一页才叫完整。"
       ],
       quote: "「明天见。」「明天见。」",
-      test: function (s) { return s.aff >= 30; }
+      test: function (s) { return s.tokens.length >= 1 || s.dates >= 1 || s.gifts >= 1; }
     },
     {
       id: "unfinished", icon: "📖", title: "未写完的手记", badge: "遗憾结局",

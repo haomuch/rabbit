@@ -131,7 +131,7 @@
   font-size: .84rem; cursor: pointer; white-space: nowrap; transition: all .28s var(--ease);
 }
 .tab:hover { color: var(--accent); border-color: var(--accent); }
-.tab.is-active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 8px 20px rgba(224, 122, 63, .28); }
+.tab.is-active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); box-shadow: 0 8px 20px rgba(224, 122, 63, .28); }
 .chapter { display: none; }
 .chapter.is-active { display: block; animation: fadeUp .55s var(--ease); }
 .chapter h3 { font-size: 1.24rem; font-weight: 800; color: var(--accent-2); margin-bottom: 1rem; }
@@ -184,7 +184,7 @@
 .q-option.is-wrong { border-color: #d96a6a; background: rgba(217, 106, 106, .1); }
 .q-option.is-wrong .q-key { background: rgba(217, 106, 106, .2); color: #b04a4a; }
 .q-feedback { margin-top: 1rem; padding: .8rem 1rem; border-radius: 12px; background: var(--glow); color: var(--text-soft); font-size: .86rem; line-height: 1.7; animation: fadeUp .4s var(--ease); }
-.q-next { margin-top: 1.2rem; border: none; background: var(--accent); color: #fff; padding: .65rem 1.6rem; border-radius: 999px; font-size: .88rem; font-weight: 600; cursor: pointer; transition: background .25s, transform .12s; }
+.q-next { margin-top: 1.2rem; border: none; background: var(--accent); color: var(--on-accent); padding: .65rem 1.6rem; border-radius: 999px; font-size: .88rem; font-weight: 600; cursor: pointer; transition: background .25s, transform .12s; }
 .q-next:hover { background: var(--accent-2); }
 .q-next:active { transform: scale(.96); }
 .quiz-result { text-align: center; padding: 1rem 0 .4rem; animation: fadeUp .5s var(--ease); }

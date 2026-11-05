@@ -11,7 +11,6 @@
 
   /* ---------------- Hero 角色插画：点击可轮换 5 种表情 ---------------- */
   var HERO_MOODS = ["normal", "happy", "shy", "sleep", "love"];
-  var HERO_MOOD_NAMES = { normal: "平常", happy: "开心", shy: "害羞", sleep: "困了", love: "心动" };
   var heroMood = { bunny: 0, fox: 0 };
 
   function paintHero(who) {
@@ -19,7 +18,6 @@
     var mood = HERO_MOODS[heroMood[who]];
     el.querySelector(".char-art").innerHTML = who === "bunny" ? Art.bunny(mood) : Art.fox(mood);
     el.setAttribute("aria-label", "点击" + (who === "bunny" ? "小兔子" : "小狐狸") + "，换一副表情");
-    return mood;
   }
   paintHero("bunny");
   paintHero("fox");
@@ -55,52 +53,67 @@
   }
 
   /* ---------------- 角色对话气泡 ---------------- */
-  var bubble = $("speechBubble"), bubbleTimer = null;
+  var bubble = $("speechBubble"), bubbleTimer = null, BUBBLE_GAP = 14;
+  function hideBubble() { bubble.classList.remove("show"); }
   function showBubble(anchorEl, text) {
     var margin = 10;
     var rect = anchorEl.getBoundingClientRect();
     var centerX = rect.left + rect.width / 2;
-    // 关键：fixed 元素若未定宽，其 shrink-to-fit 宽度 = 视口宽 - left，
-    // 会随 left 变化。测量前先把 left 归零，拿到不依赖位置的最大宽度，
-    // 之后写入新 left 时实际宽度只会 <= 该值，钳制才始终成立。
-    bubble.style.left = "0px";
-    // 宽度按视口自适应（不依赖 CSS min()，兼容老旧 WebView）
+
+    // 宽度只跟视口有关：先定宽再测量，测量结果与定位无关
     bubble.style.maxWidth = Math.min(250, window.innerWidth - margin * 2) + "px";
     bubble.textContent = text;
-    bubble.classList.add("show");
     var bw = bubble.offsetWidth, bh = bubble.offsetHeight;
     var half = bw / 2;
-    // 水平方向：优先以角色为中心，越界则吸附到视口内
-    var left = centerX;
-    if (left - half < margin) left = margin + half;
-    if (left + half > window.innerWidth - margin) left = window.innerWidth - margin - half;
-    // 垂直方向：默认浮在角色上方，越界则下移到视口内
-    var top = rect.top - 14;
-    if (top - bh < margin) top = rect.bottom + 14;
-    if (top + bh > window.innerHeight - margin) top = window.innerHeight - margin - bh;
-    if (top < margin) top = margin;
-    bubble.style.left = left + "px";
-    bubble.style.top = top + "px";
-    // 用写入 left 后的真实宽度计算箭头，保证箭头落在气泡范围内
-    var actualHalf = bubble.offsetWidth / 2;
-    var arrow = Math.max(-actualHalf + 12, Math.min(actualHalf - 12, centerX - left));
+
+    // 水平：优先以角色为中心，越界则吸附到视口内
+    var center = centerX;
+    if (center - half < margin) center = margin + half;
+    if (center + half > window.innerWidth - margin) center = window.innerWidth - margin - half;
+
+    // 垂直：统一按“气泡顶边”计算，最后换算成 CSS 需要的底边
+    // （.speech-bubble 用 translate(-50%,-100%)，写入的 top 表示气泡底边）
+    var aboveTop = rect.top - BUBBLE_GAP - bh;
+    var belowTop = rect.bottom + BUBBLE_GAP;
+    var below = false;
+    var topY;
+    if (aboveTop >= margin) {
+      topY = aboveTop;
+    } else if (belowTop + bh <= window.innerHeight - margin) {
+      topY = belowTop;
+      below = true;
+    } else {
+      topY = window.innerHeight - margin - bh;   // 上下都放不下时贴进视口
+    }
+    topY = Math.max(margin, Math.min(topY, window.innerHeight - margin - bh));
+
+    bubble.style.left = center + "px";
+    bubble.style.top = (topY + bh) + "px";
+    bubble.classList.toggle("is-below", below);
+
+    // 箭头跟着角色中心走，但不超出气泡圆角
+    var limit = Math.max(0, half - 14);
+    var arrow = Math.max(-limit, Math.min(limit, centerX - center));
     bubble.style.setProperty("--arrow", arrow + "px");
+    bubble.classList.add("show");
+
     clearTimeout(bubbleTimer);
-    bubbleTimer = setTimeout(function () { bubble.classList.remove("show"); }, 2800);
+    bubbleTimer = setTimeout(hideBubble, 2800);
   }
   $("bunnyChar").addEventListener("click", function () {
     heroMood.bunny = (heroMood.bunny + 1) % HERO_MOODS.length;
-    var m = paintHero("bunny");
+    paintHero("bunny");
     showBubble(this, util.pick(D.bubbles.bunny));
     F.audio.sfx("tap");
   });
   $("foxChar").addEventListener("click", function () {
     heroMood.fox = (heroMood.fox + 1) % HERO_MOODS.length;
-    var m = paintHero("fox");
+    paintHero("fox");
     showBubble(this, util.pick(D.bubbles.fox));
     F.audio.beep(470, 0.08, "triangle", 0.03);
   });
-  window.addEventListener("scroll", function () { bubble.classList.remove("show"); }, { passive: true });
+  window.addEventListener("scroll", hideBubble, { passive: true });
+  window.addEventListener("resize", hideBubble, { passive: true });
 
   /* ---------------- 章节 ---------------- */
   (function renderChapters() {
@@ -271,21 +284,24 @@
     var save = F.getSave(F.SAVE_KEY);
     var meta = F.getMeta();
     var status = $("playStatus"), cont = $("playContinueBtn"), heroStart = $("heroStart");
-    var alive = save && save.v === 2 && !save.ending;
+    var alive = !!(save && save.v === 2 && !save.ending);
+
+    cont.hidden = !alive;
 
     if (alive) {
       var s = D.seasons[Math.floor((Math.max(1, save.day) - 1) / 7)] || D.seasons[3];
       status.innerHTML = "本机遇到了一本正在写的手记：<strong>" + esc(s.title) + " · 第 " +
         Number(save.day) + " / 28 天</strong>　心动 " + Number(save.aff) +
         " · 回忆 " + (save.memories ? save.memories.length : 0) + " 张";
-      cont.hidden = false;
-      cont.textContent = "继续第 " + save.day + " 天 →";
-      heroStart.textContent = "继续第 " + save.day + " 天 →";
+      cont.textContent = "继续第 " + Number(save.day) + " 天 →";
+      heroStart.textContent = "继续第 " + Number(save.day) + " 天 →";
+      heroStart.setAttribute("href", "game.html");
     } else if (save && save.ending) {
       var end = D.endings.filter(function (e) { return e.id === save.ending; })[0];
       status.innerHTML = "上一本手记已经写完：<strong>" + esc(end ? end.title : "某个结局") +
         "</strong>　已解锁 " + meta.endings.length + " 个结局";
       heroStart.textContent = "再写一本新的手记 →";
+      heroStart.setAttribute("href", "game.html?new=1");
     } else {
       status.textContent = "手记架还空着 —— 第一页，等你来写。";
     }

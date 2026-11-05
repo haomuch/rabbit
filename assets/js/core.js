@@ -29,9 +29,7 @@
         .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
     },
-    qs: function (sel, root) { return (root || document).querySelector(sel); },
     qsa: function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); },
-    pad2: function (n) { return n < 10 ? "0" + n : String(n); },
     reduceMotion: reduceMotion
   };
 
@@ -47,18 +45,14 @@
     catch (e) { return false; }
   }
   Forest.storage = {
-    get: read,
     set: write,
-    remove: function (key) { try { localStorage.removeItem(key); } catch (e) {} },
-    metaKey: META_KEY
+    remove: function (key) { try { localStorage.removeItem(key); } catch (e) {} }
   };
   Forest.getMeta = function () {
     var m = read(META_KEY, null);
     if (!m || typeof m !== "object") m = {};
     if (!Array.isArray(m.endings)) m.endings = [];
     if (!Array.isArray(m.achievements)) m.achievements = [];
-    if (typeof m.bestAff !== "number") m.bestAff = 0;
-    if (typeof m.totalDays !== "number") m.totalDays = 0;
     if (typeof m.quizPerfect !== "boolean") m.quizPerfect = false;
     return m;
   };
@@ -128,7 +122,6 @@
   }
 
   Forest.audio = {
-    get enabled() { return soundOn; },
     beep: tone,
     sfx: function (name) {
       switch (name) {
