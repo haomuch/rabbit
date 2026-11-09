@@ -219,10 +219,217 @@
     };
   }
 
+
+  /* ---------------- 口琴与和弦节奏小游戏（秋） ---------------- */
+  function rhythmGame(root, opts, done) {
+    opts = opts || {};
+    var duration = opts.duration || 16;
+    var target = opts.target || 8;
+    var tempo = opts.tempo || 750; // 音符生成间隔 ms
+
+    var score = 0, combo = 0, maxCombo = 0, finished = false;
+    var timeLeft = duration, timer = null, spawnTimer = null, raf = null;
+    var notes = []; // { el, progress, speed, hit, symbol }
+
+    root.innerHTML =
+      head("口琴合奏 · 伴奏 " + target + " 拍", '<span class="m-score">0</span> / ' + target, '<span class="m-time">' + duration + "</span>s") +
+      '<div class="rhythm-field">' +
+        '<div class="rhythm-combo" id="rhythmCombo">Combo 0</div>' +
+        '<div class="rhythm-track">' +
+          '<div class="rhythm-start-icon">🦊🎶</div>' +
+          '<div class="rhythm-line"></div>' +
+          '<div class="rhythm-hit-zone" id="hitZone">' +
+            '<span class="hit-ring"></span>' +
+            '<span class="hit-center">🐰</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="rhythm-feedback" id="rhythmFeedback"></div>' +
+        '<div class="rhythm-ctrl">' +
+          '<button class="rhythm-btn" id="rhythmBtn" type="button">🎶 击节伴奏 (空格/轻触)</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="mini-foot">等音符飘到光环中央时按下伴奏 · 敲满 ' + target + ' 拍就算过关</div>';
+
+    var track = root.querySelector(".rhythm-track");
+    var hitZone = root.querySelector("#hitZone");
+    var hudScore = root.querySelector(".m-score");
+    var hudTime = root.querySelector(".m-time");
+    var comboEl = root.querySelector("#rhythmCombo");
+    var feedbackEl = root.querySelector("#rhythmFeedback");
+    var rhythmBtn = root.querySelector("#rhythmBtn");
+
+    var trackWidth = track.clientWidth || 320;
+    var symbols = ["🎶", "🍁", "✨", "🍂", "💛"];
+
+    function showFeedback(text, cls) {
+      if (!feedbackEl) return;
+      feedbackEl.className = "rhythm-feedback " + cls;
+      feedbackEl.textContent = text;
+      setTimeout(function () {
+        if (feedbackEl) feedbackEl.className = "rhythm-feedback";
+      }, 500);
+    }
+
+    function spawnNote() {
+      if (finished) return;
+      var symbol = F.util.pick(symbols);
+      var el = document.createElement("div");
+      el.className = "rhythm-note";
+      el.textContent = symbol;
+      track.appendChild(el);
+
+      var note = {
+        el: el,
+        pos: 0, // 0% 到 100%
+        speed: 0.45, // 百分比 / 秒
+        hit: false
+      };
+      notes.push(note);
+    }
+
+    function playChordTone(isPerfect) {
+      // 模拟口琴与和弦清澈声响
+      var baseFreq = isPerfect ? 659.25 : 523.25; // E5 或 C5
+      F.audio.beep(baseFreq, 0.12, "triangle", 0.04);
+      setTimeout(function () {
+        F.audio.beep(baseFreq * 1.25, 0.16, "sine", 0.03);
+      }, 40);
+    }
+
+    function triggerHit() {
+      if (finished) return;
+      hitZone.classList.add("pulse");
+      setTimeout(function () { if (hitZone) hitZone.classList.remove("pulse"); }, 200);
+
+      // 寻找最接近判定区的音符 (hit zone 位于 82% ~ 94% 区域)
+      var targetZone = 88;
+      var bestIdx = -1, minDiff = 999;
+      for (var i = 0; i < notes.length; i++) {
+        var n = notes[i];
+        if (!n.hit) {
+          var diff = Math.abs(n.pos - targetZone);
+          if (diff < minDiff) { minDiff = diff; bestIdx = i; }
+        }
+      }
+
+      if (bestIdx >= 0 && minDiff <= 12) {
+        var hitNote = notes[bestIdx];
+        hitNote.hit = true;
+        hitNote.el.classList.add("hit-success");
+        var isPerfect = minDiff <= 6;
+        score++;
+        combo++;
+        if (combo > maxCombo) maxCombo = combo;
+        hudScore.textContent = String(score);
+        comboEl.textContent = "Combo " + combo;
+        comboEl.classList.add("active");
+
+        playChordTone(isPerfect);
+        showFeedback(isPerfect ? "✨ 完美合奏 Perfect!" : "💛 好节拍 Good!", isPerfect ? "is-perfect" : "is-good");
+
+        setTimeout(function () {
+          if (hitNote.el.parentNode) hitNote.el.parentNode.removeChild(hitNote.el);
+        }, 220);
+      } else {
+        combo = 0;
+        comboEl.textContent = "Combo 0";
+        comboEl.classList.remove("active");
+        F.audio.sfx("bad");
+        showFeedback("错过了 Miss", "is-miss");
+      }
+    }
+
+    rhythmBtn.addEventListener("pointerdown", function (e) {
+      e.preventDefault();
+      triggerHit();
+    });
+
+    function onKey(e) {
+      if (e.code === "Space" || e.key === " ") {
+        e.preventDefault();
+        triggerHit();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+
+    var lastTs = 0;
+    function loop(ts) {
+      if (finished) return;
+      if (!lastTs) lastTs = ts;
+      var dt = Math.min((ts - lastTs) / 1000, 0.05);
+      lastTs = ts;
+
+      for (var i = notes.length - 1; i >= 0; i--) {
+        var n = notes[i];
+        if (!n.hit) {
+          n.pos += n.speed * dt * 100;
+          n.el.style.left = n.pos + "%";
+          if (n.pos > 102) {
+            // 超出屏幕未点击
+            n.hit = true;
+            if (n.el.parentNode) n.el.parentNode.removeChild(n.el);
+            notes.splice(i, 1);
+            if (combo > 0) {
+              combo = 0;
+              comboEl.textContent = "Combo 0";
+              comboEl.classList.remove("active");
+            }
+          }
+        }
+      }
+
+      raf = requestAnimationFrame(loop);
+    }
+    raf = requestAnimationFrame(loop);
+
+    spawnTimer = setInterval(spawnNote, tempo);
+
+    timer = setInterval(function () {
+      if (finished) return;
+      timeLeft--;
+      hudTime.textContent = String(Math.max(0, timeLeft));
+      if (timeLeft <= 0) {
+        finish();
+      }
+    }, 1000);
+
+    function finish() {
+      if (finished) return;
+      finished = true;
+      if (timer) clearInterval(timer);
+      if (spawnTimer) clearInterval(spawnTimer);
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("keydown", onKey);
+
+      notes.forEach(function (n) {
+        if (n.el.parentNode) n.el.parentNode.removeChild(n.el);
+      });
+      notes = [];
+
+      var win = score >= target;
+      if (win) F.audio.sfx("win");
+      else F.audio.sfx("lose");
+
+      done({ win: win, score: score, target: target, maxCombo: maxCombo });
+    }
+
+    return {
+      destroy: function () {
+        finished = true;
+        if (timer) clearInterval(timer);
+        if (spawnTimer) clearInterval(spawnTimer);
+        if (raf) cancelAnimationFrame(raf);
+        window.removeEventListener("keydown", onKey);
+        root.innerHTML = "";
+      }
+    };
+  }
   window.ForestMiniGames = {
     catchGame: catchGame,
     memoryGame: memoryGame,
+    rhythmGame: rhythmGame,
     start: function (root, kind, opts, done) {
+      if (kind === "rhythm") return rhythmGame(root, opts, done);
       return kind === "memory" ? memoryGame(root, opts, done) : catchGame(root, opts, done);
     }
   };

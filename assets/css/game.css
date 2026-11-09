@@ -397,3 +397,200 @@
   .brand { font-size: .86rem; }
   .action-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* =========================================================
+   新增功能样式：天气、天赋、小窝装点、手作、二周目心声、节奏小游戏、拍立得
+   ========================================================= */
+
+/* 天气与天赋 chip */
+.weather-chip {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .2rem .55rem; border-radius: 999px;
+  background: var(--card-bg, #ffffff); border: 1px solid var(--line);
+  font-size: .76rem; color: var(--text); box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+.weather-chip .w-icon { font-size: .88rem; }
+.weather-chip .w-hint { color: var(--accent); margin-left: .2rem; }
+
+.talent-chip {
+  display: inline-flex; align-items: center; gap: .25rem;
+  padding: .2rem .5rem; border-radius: 999px;
+  background: rgba(235, 138, 93, 0.12); border: 1px solid rgba(235, 138, 93, 0.35);
+  font-size: .74rem; color: var(--accent-2, #d9682c); font-weight: 500;
+  white-space: nowrap;
+}
+
+/* 小窝装点陈列架 */
+.home-decor-shelf {
+  position: absolute; top: 1.1rem; right: 1.1rem; z-index: 4;
+  display: flex; align-items: center; gap: .45rem;
+  padding: .3rem .6rem; border-radius: 14px;
+  background: rgba(255, 255, 255, 0.78); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  border: 1px solid var(--line); box-shadow: 0 4px 14px rgba(90, 70, 54, 0.08);
+}
+[data-theme="night"] .home-decor-shelf {
+  background: rgba(42, 33, 27, 0.82);
+}
+.home-decor-shelf .hds-label {
+  font-size: .72rem; color: var(--text-soft); font-weight: 500; margin-right: .2rem;
+}
+.home-decor-item {
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .2s var(--ease);
+}
+.home-decor-item:hover { transform: translateY(-2px) scale(1.08); }
+.decor-svg { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08)); }
+
+/* 二周目心声批注 */
+.secret-thought-box {
+  margin: .8rem 0 .4rem; padding: .65rem .8rem; border-radius: 12px;
+  background: linear-gradient(135deg, rgba(246, 226, 200, 0.38), rgba(253, 247, 238, 0.8));
+  border: 1px dashed var(--accent);
+  animation: fadeIn .4s var(--ease);
+}
+[data-theme="night"] .secret-thought-box {
+  background: linear-gradient(135deg, rgba(62, 45, 33, 0.6), rgba(42, 33, 27, 0.8));
+}
+.secret-thought-box .st-tag {
+  display: inline-block; font-size: .7rem; font-weight: 600;
+  color: var(--accent); margin-bottom: .25rem;
+}
+.secret-thought-box .st-text {
+  font-size: .78rem; line-height: 1.5; color: var(--text);
+  font-style: italic; margin: 0;
+}
+
+/* 小窝手作工作台 */
+.craft-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: .85rem;
+  margin: 1rem 0;
+}
+@media (max-width: 600px) {
+  .craft-grid { grid-template-columns: 1fr; gap: .65rem; }
+}
+.craft-card {
+  padding: .95rem; border-radius: 14px;
+  background: var(--card-bg, #fff); border: 1.5px solid var(--line);
+  box-shadow: var(--shadow-sm); transition: all .2s var(--ease);
+}
+.craft-card.locked { opacity: .72; }
+.craft-card:hover:not(.locked) { border-color: var(--accent); transform: translateY(-2px); }
+.cc-top { display: flex; align-items: flex-start; gap: .7rem; margin-bottom: .5rem; }
+.cc-icon { font-size: 1.8rem; line-height: 1; flex-shrink: 0; }
+.cc-name { font-weight: 600; font-size: .95rem; color: var(--text); }
+.cc-desc { font-size: .76rem; color: var(--text-soft); line-height: 1.4; margin-top: .15rem; }
+.cc-mats { font-size: .76rem; color: var(--text); margin: .55rem 0 .35rem; }
+.mat-badge {
+  display: inline-block; padding: .15rem .45rem; border-radius: 6px;
+  font-size: .72rem; margin: .15rem .15rem .15rem 0;
+}
+.mat-badge.ok { background: rgba(72, 160, 102, 0.12); color: #2d7a48; }
+.mat-badge.lack { background: rgba(220, 80, 80, 0.12); color: #c0392b; }
+.cc-decor { font-size: .72rem; color: var(--accent-2); margin-bottom: .7rem; }
+.cc-foot { display: flex; justify-content: flex-end; }
+
+/* 手作成功庆祝展示 */
+.craft-success-view {
+  text-align: center; padding: 1.2rem .5rem;
+}
+.craft-success-view .cs-icon { font-size: 3rem; margin-bottom: .5rem; }
+.craft-success-view .cs-desc { font-size: .88rem; color: var(--text); line-height: 1.5; margin-bottom: .8rem; }
+.cs-decor-preview {
+  display: inline-flex; align-items: center; gap: .8rem;
+  padding: .6rem 1rem; border-radius: 12px;
+  background: var(--card-bg); border: 1px solid var(--line);
+  margin-bottom: 1rem; text-align: left;
+}
+
+/* 节奏小游戏样式（秋季口琴） */
+.rhythm-field {
+  padding: 1.2rem .8rem; border-radius: 16px;
+  background: radial-gradient(circle at 50% 30%, rgba(246, 226, 200, 0.4), rgba(253, 247, 238, 0.95));
+  border: 1.5px solid var(--line); margin: .8rem 0; text-align: center;
+  position: relative; overflow: hidden;
+}
+[data-theme="night"] .rhythm-field {
+  background: radial-gradient(circle at 50% 30%, rgba(55, 42, 33, 0.5), rgba(30, 24, 20, 0.95));
+}
+.rhythm-combo {
+  font-size: .84rem; font-weight: 600; color: var(--text-soft);
+  height: 20px; transition: all .2s;
+}
+.rhythm-combo.active { color: var(--accent-2); transform: scale(1.15); }
+.rhythm-track {
+  height: 90px; margin: .8rem 0; position: relative;
+  border-radius: 12px; background: rgba(0,0,0,0.04);
+  display: flex; align-items: center;
+}
+[data-theme="night"] .rhythm-track { background: rgba(255,255,255,0.05); }
+.rhythm-line {
+  position: absolute; left: 30px; right: 60px; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent) 30%, var(--accent-2) 90%);
+  border-radius: 2px;
+}
+.rhythm-start-icon {
+  position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+  font-size: 1.6rem;
+}
+.rhythm-hit-zone {
+  position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+  width: 58px; height: 58px; border-radius: 50%;
+  border: 2.5px dashed var(--accent); display: flex; align-items: center; justify-content: center;
+  transition: all .15s ease-out;
+}
+.rhythm-hit-zone.pulse {
+  transform: translateY(-50%) scale(1.22);
+  border-color: #f39c12; background: rgba(243, 156, 18, 0.2);
+}
+.hit-center { font-size: 1.5rem; }
+.rhythm-note {
+  position: absolute; top: 50%; transform: translate(-50%, -50%);
+  font-size: 1.7rem; pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+  transition: opacity .15s;
+}
+.rhythm-note.hit-success {
+  animation: notePop .25s ease-out forwards;
+}
+@keyframes notePop {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+}
+.rhythm-feedback {
+  height: 24px; font-size: .9rem; font-weight: 600; margin-bottom: .6rem;
+}
+.rhythm-feedback.is-perfect { color: #f39c12; }
+.rhythm-feedback.is-good { color: #27ae60; }
+.rhythm-feedback.is-miss { color: #e74c3c; }
+
+.rhythm-btn {
+  display: inline-block; width: 100%; max-width: 320px;
+  padding: .75rem 1.4rem; border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; font-size: 1.02rem; font-weight: 600;
+  border: none; cursor: pointer; box-shadow: 0 4px 14px rgba(217, 104, 44, 0.35);
+  transition: transform .1s var(--ease), box-shadow .15s;
+}
+.rhythm-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 6px rgba(217, 104, 44, 0.4);
+}
+
+/* 拍立得纪念明信片弹层样式 */
+.polaroid-view {
+  text-align: center; padding: .6rem 0;
+}
+.polaroid-wrapper {
+  display: inline-block; margin: .5rem auto; padding: 6px;
+  background: #fff; border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(70, 50, 36, 0.16);
+  max-width: 90vw;
+}
+.polaroid-img {
+  display: block; width: 100%; max-width: 340px; height: auto;
+  border-radius: 4px;
+}
+.polaroid-hint {
+  font-size: .78rem; color: var(--text-soft); margin: .6rem 0 1rem;
+}

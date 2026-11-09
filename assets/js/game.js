@@ -24,6 +24,7 @@
     write: "写完了今天的手记，最后一行没忍住又提到 {{T}}。",
     chat: "串门聊到天色变软，其实也没聊什么要紧事。",
     rest: "煮了一壶水，什么都没做，也很好。",
+    craft: "在工作台前慢条斯理地手作，小窝里飘着暖洋洋的甜香。",
     gift: "把礼物递过去的时候，假装自己一点也不紧张。",
     date: "今天，是只属于两个人的一页。"
   };
@@ -45,14 +46,31 @@
   function season() { return D.seasons[clamp(Math.floor((state.day - 1) / 7), 0, 3)]; }
   function role() { return D.roles[(state && state.role) || selectedRole] || D.roles.bunny; }
 
+  function generateWeather(sId) {
+    var pool = ["sunny", "breezy"];
+    if (sId === "spring") pool = ["sunny", "sunny", "rainy", "breezy"];
+    else if (sId === "summer") pool = ["sunny", "rainy", "starry", "sunny"];
+    else if (sId === "autumn") pool = ["breezy", "breezy", "rainy", "sunny"];
+    else if (sId === "winter") pool = ["snowy", "snowy", "starry", "sunny"];
+    return util.pick(pool);
+  }
+  function currentWeather() {
+    var wId = (state && state.weather) || "sunny";
+    return (D.weathers || []).filter(function (w) { return w.id === wId; })[0] || {
+      id: "sunny", name: "晴空暖阳", icon: "☀️", hint: "散步心情+2", desc: "温暖的晴天"
+    };
+  }
+
   function newState(roleKey) {
     var m = F.getMeta();
     var st = {
       v: 2, role: roleKey, day: 1, ap: 3,
       aff: 12, bond: 8, mood: 72, energy: 100,
-      items: { berry: 2, mushroom: 1, wood: 0, flower: 0, stardust: 0 },
+      items: { berry: 2, mushroom: 1, wood: 0, flower: 0, stardust: 0, jam: 0, bbq_skewer: 0, flower_wreath: 0, star_bookmark: 0 },
       seenEvents: [], memories: [], tokens: [], diary: [], log: [],
-      gifts: 0, dates: 0, flags: {},
+      gifts: 0, dates: 0, crafts: 0, homeDecor: {},
+      weather: "sunny",
+      flags: {},
       ending: null, lastLine: "",
       updatedAt: Date.now()
     };
@@ -68,9 +86,12 @@
     Object.keys(D.items).forEach(function (k) { state.items[k] = Math.max(0, Number(state.items[k]) || 0); });
     ["seenEvents", "memories", "tokens", "diary", "log"].forEach(function (k) { if (!Array.isArray(state[k])) state[k] = []; });
     if (!state.flags || typeof state.flags !== "object") state.flags = {};
+    if (!state.homeDecor || typeof state.homeDecor !== "object") state.homeDecor = {};
     if (!state.role || !D.roles[state.role]) state.role = "bunny";
     if (typeof state.gifts !== "number") state.gifts = 0;
     if (typeof state.dates !== "number") state.dates = 0;
+    if (typeof state.crafts !== "number") state.crafts = 0;
+    if (!state.weather) state.weather = "sunny";
   }
   function save() { normalize(); state.updatedAt = Date.now(); F.storage.set(F.SAVE_KEY, state); }
 
@@ -280,9 +301,17 @@
       return '<span class="item-chip' + (n ? "" : " empty") + '">' + it.icon + " " + it.name + " <b>" + n + "</b></span>";
     }).join("");
 
+    var w = currentWeather();
+    var talentTag = state.role === "fox"
+      ? '<span class="talent-chip" title="小狐狸天赋：步伐轻快，行动耗体降低3点，串门自带心动+1">🦊 旅人天赋</span>'
+      : '<span class="talent-chip" title="小兔子天赋：嗅觉敏锐，采集浆果/晒蘑菇有35%几率额外丰收">🐰 嗅觉天赋</span>';
+    var weatherChip = '<span class="weather-chip" title="' + esc(w.desc) + '"><span class="w-icon">' + w.icon + '</span> ' + esc(w.name) + '<small class="w-hint">(' + esc(w.hint) + ')</small></span>';
+
     $("hud").innerHTML =
       '<div class="hud-top">' +
         '<span class="season-chip"><span class="sc-icon">' + s.icon + "</span>" + esc(s.title) + " · " + esc(s.subtitle) + "</span>" +
+        weatherChip +
+        talentTag +
         '<span class="hud-day">第 ' + state.day + ' 天 <small>/ 28</small></span>' +
         '<div class="ap-box">今日 ' + dots + " " + state.ap + " 格</div>" +
         '<span class="hud-poem">' + esc(s.poem) + "</span>" +
@@ -316,8 +345,22 @@
     var sc = $("sceneCard");
     sc.className = "scene-card season-" + s.id;
     sc.style.setProperty("--season-sky", s.sky);
+    var decorHtml = "";
+    if (state.homeDecor && Object.keys(state.homeDecor).length > 0) {
+      var decorItems = "";
+      Object.keys(state.homeDecor).forEach(function (k) {
+        if (state.homeDecor[k] && Art.decor) {
+          decorItems += '<div class="home-decor-item" title="小窝装点">' + Art.decor(k, 34) + '</div>';
+        }
+      });
+      if (decorItems) {
+        decorHtml = '<div class="home-decor-shelf"><span class="hds-label">🏡 森林小窝</span>' + decorItems + '</div>';
+      }
+    }
+
     sc.innerHTML =
       '<div class="scene-decor">' + Art.scene(s.id) + "</div>" +
+      decorHtml +
       '<div class="scene-caption">' + esc(s.title) + " · 第 " + state.day + " 天</div>" +
       '<div class="scene-chars">' +
         '<div class="scene-char me">' + Art.get(r.art, selfMood()) + "</div>" +
@@ -340,9 +383,19 @@
     });
     if (!list) list = '<li class="diary-empty">今天还是空白的一页。选一件事做吧，哪怕只是去溪边走走。</li>';
 
+    var m = F.getMeta();
+    var secretHtml = "";
+    if (m.endings && m.endings.length > 0 && state.lastSecretThought) {
+      secretHtml = '<div class="secret-thought-box">' +
+        '<span class="st-tag">✨ 二周目 · TA的秘密心声</span>' +
+        '<p class="st-text">' + esc(tpl(state.lastSecretThought)) + '</p>' +
+        '</div>';
+    }
+
     $("diaryCard").innerHTML =
       '<div class="diary-head"><h3>今日手记</h3><span>第 ' + state.day + " 天</span></div>" +
       '<ul class="diary-list">' + list + "</ul>" +
+      secretHtml +
       '<div class="diary-summary">已写下 <b>' + state.diary.length + "</b> 页 · 收集 <b>" + state.memories.length +
         "</b> 张回忆 · 季节信物 <b>" + state.tokens.length + " / 4</b></div>" +
       '<div class="diary-foot">' +
@@ -364,8 +417,14 @@
       if (seasonDateUsed(s.id)) return { ok: false, why: "这一季已经约过啦" };
       if (!hasItems(cost)) return { ok: false, why: "需要 " + costText(cost) };
     }
+    if (a.special === "craft") {
+      var canAny = (D.recipes || []).some(function (rc) { return hasItems(rc.materials); });
+      if (!canAny) return { ok: false, why: "手作材料还不够" };
+    }
     if (state.ap < a.ap) return { ok: false, why: "行动点不够" };
-    if (a.energy && state.energy < a.energy) return { ok: false, why: "体力不够，先歇一会儿" };
+    var energyCost = a.energy;
+    if (state.role === "fox" && energyCost) energyCost = Math.max(4, energyCost - 3);
+    if (energyCost && state.energy < energyCost) return { ok: false, why: "体力不够，先歇一会儿" };
     if (a.special === "gift" && !anyItems()) return { ok: false, why: "背包空空的" };
     return { ok: true, why: "" };
   }
@@ -467,11 +526,24 @@
     if (!st.ok) { toast(st.why, "warn"); F.audio.sfx("bad"); return; }
 
     if (a.special === "gift") { openGift(); return; }
+    if (a.special === "craft") { openCraft(); return; }
     if (a.special === "date") { startDate(a, s); return; }
 
     state.ap -= a.ap;
-    if (a.energy) state.energy = clamp(state.energy - a.energy, 0, 100);
-    applyGain(a.gain);
+    var actualEnergy = a.energy;
+    if (state.role === "fox" && actualEnergy) actualEnergy = Math.max(4, actualEnergy - 3);
+    if (state.weather === "rainy" && id === "walk") actualEnergy += 2;
+    if (actualEnergy) state.energy = clamp(state.energy - actualEnergy, 0, 100);
+
+    var baseGain = {};
+    if (a.gain) { Object.keys(a.gain).forEach(function (k) { baseGain[k] = a.gain[k]; }); }
+    // 天气加成
+    if (state.weather === "sunny" && id === "walk") baseGain.mood = (baseGain.mood || 0) + 2;
+    if (state.weather === "rainy" && id === "chat") baseGain.aff = (baseGain.aff || 0) + 2;
+    if (state.weather === "snowy" && id === "rest") baseGain.energy = (baseGain.energy || 0) + 15;
+    // 小狐狸天赋：聊天心动+1
+    if (state.role === "fox" && id === "chat") baseGain.aff = (baseGain.aff || 0) + 1;
+    applyGain(baseGain);
 
     var gained = {};
     if (a.items) { addItems(a.items); mergeMap(gained, a.items); }
@@ -481,12 +553,31 @@
     var notes = [];
     if (a.bonus && a.bonus.season === s.id) notes.push(s.name + "季加成，收获更多！");
 
+    // 小兔子天赋：敏锐嗅觉
+    if (state.role === "bunny" && (id === "forage" || id === "mushroom") && Math.random() < 0.35) {
+      var bonusItem = id === "forage" ? { berry: 1 } : { mushroom: 1 };
+      addItems(bonusItem); mergeMap(gained, bonusItem);
+      notes.push("🐰 小兔子敏锐嗅觉触发：额外丰收！");
+    }
+    // 天气微风加成
+    if (state.weather === "breezy" && (id === "forage" || id === "wood") && Math.random() < 0.3) {
+      var breezeItem = id === "forage" ? { berry: 1 } : { wood: 1 };
+      addItems(breezeItem); mergeMap(gained, breezeItem);
+      notes.push("🍃 森林微风拂过：顺手多捡了一份！");
+    }
+
     if (a.chance) handleChance(a.chance, s, gained, notes);
 
     var line = tpl(ACTION_LINES[id] || "今天也好好过了一天。");
     state.lastLine = line;
     state.log.push(line);
     if (state.log.length > 12) state.log = state.log.slice(-12);
+
+    // 二周目：提取 TA 的隐秘心声
+    var metaCheck = F.getMeta();
+    if (metaCheck.endings && metaCheck.endings.length > 0 && D.secretThoughts && D.secretThoughts[id]) {
+      state.lastSecretThought = util.pick(D.secretThoughts[id]);
+    }
 
     syncAchievements(); save(); render();
     F.audio.sfx("good");
@@ -510,6 +601,81 @@
         notes.push(txt);
       }
     }
+  }
+
+
+  /* ---------------- 小窝手作 ---------------- */
+  function openCraft() {
+    var recipes = D.recipes || [];
+    var grid = recipes.map(function (rc) {
+      var canMake = hasItems(rc.materials);
+      var matsText = Object.keys(rc.materials).map(function (k) {
+        var needed = rc.materials[k], have = (state.items && state.items[k]) || 0;
+        var ok = have >= needed;
+        return '<span class="mat-badge' + (ok ? ' ok' : ' lack') + '">' +
+          D.items[k].icon + ' ' + D.items[k].name + ' ' + have + '/' + needed + '</span>';
+      }).join(' ');
+
+      return '<div class="craft-card' + (canMake ? '' : ' locked') + '">' +
+        '<div class="cc-top">' +
+          '<span class="cc-icon">' + rc.icon + '</span>' +
+          '<div><div class="cc-name">' + esc(rc.name) + '</div><div class="cc-desc">' + esc(rc.desc) + '</div></div>' +
+        '</div>' +
+        '<div class="cc-mats">需要素材：' + matsText + '</div>' +
+        '<div class="cc-decor">🏡 解锁小窝装点：<b>' + esc(rc.decorName) + '</b></div>' +
+        '<div class="cc-foot">' +
+          '<button class="btn btn-sm btn-primary" type="button" data-act="make-craft" data-id="' + rc.id + '"' +
+          (canMake ? '' : ' disabled') + '>制作并装点</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    var html = ovHead("小窝手作", "森林手作工作台") +
+      '<p class="ov-sub">慢熬果酱、烤制蘑菇、编制花环或引纳星光。制作不仅可作为高级心意送礼，还能给小窝添上温暖装饰！消耗 1 AP。</p>' +
+      '<div class="craft-grid">' + grid + '</div>' +
+      '<div class="ov-actions"><button class="btn" type="button" data-act="close">合上手作台</button></div>';
+    openOverlay(html, { wide: true });
+  }
+
+  function doCraft(recipeId) {
+    if (!state || state.ap < 1) return;
+    var rc = (D.recipes || []).filter(function (r) { return r.id === recipeId; })[0];
+    if (!rc || !hasItems(rc.materials)) {
+      toast("所需材料不足", "warn");
+      F.audio.sfx("bad");
+      return;
+    }
+    consumeItems(rc.materials);
+    state.items[rc.product] = (state.items[rc.product] || 0) + 1;
+    state.ap -= 1;
+    state.crafts = (state.crafts || 0) + 1;
+    if (!state.homeDecor) state.homeDecor = {};
+    state.homeDecor[rc.decor] = true;
+
+    var deltas = applyGain({ aff: 5, bond: 6, mood: 8 });
+    var line = "制作了" + rc.name + "，小窝里摆上了" + rc.decorName + "。";
+    state.lastLine = line;
+    state.log.push(line);
+
+    var metaCheck = F.getMeta();
+    if (metaCheck.endings && metaCheck.endings.length > 0 && D.secretThoughts && D.secretThoughts.craft) {
+      state.lastSecretThought = util.pick(D.secretThoughts.craft);
+    }
+
+    syncAchievements(); save(); render();
+    F.audio.sfx("win");
+
+    var html = ovHead("手作完成 · " + rc.name, "🏡 小窝添了新装扮！", null, false) +
+      '<div class="craft-success-view">' +
+        '<div class="cs-icon">' + rc.icon + '</div>' +
+        '<p class="cs-desc">' + esc(rc.desc) + '</p>' +
+        '<div class="cs-decor-preview">' + (Art.decor ? Art.decor(rc.decor, 56) : '') +
+          '<div><b>' + esc(rc.decorName) + '</b><br><small style="color:var(--text-soft)">已悬挂摆放在树洞小窝中</small></div>' +
+        '</div>' +
+        gainChips(deltas, {}) +
+      '</div>' +
+      '<div class="ov-actions"><button class="btn btn-primary" type="button" data-act="close">真棒，收好！</button></div>';
+    openOverlay(html);
   }
 
   /* ---------------- 送礼 ---------------- */
@@ -763,6 +929,8 @@
     state.energy = clamp(state.energy + 22, 0, 100);
     state.mood = clamp(state.mood + 4, 0, 100);
     state.log = [];
+    state.weather = generateWeather(season().id);
+    state.lastSecretThought = null;
     if ((state.day - 1) % 7 === 0) {
       var s = season();
       state.lastLine = s.title + "，" + s.poem;
@@ -800,12 +968,122 @@
       '<p class="ed-quote">' + esc(tpl(end.quote)) + "</p>" +
       '<p class="ed-stats">♥ 心动 ' + state.aff + " · ✦ 默契 " + state.bond +
         " · 📖 回忆 " + state.memories.length + " 张 · 🏅 信物 " + state.tokens.length + " / 4</p>" +
-      '<div class="ov-actions" style="justify-content:center">' +
+      '<div class="ov-actions" style="justify-content:center;flex-wrap:wrap;gap:.6rem">' +
+        '<button class="btn btn-primary" type="button" data-act="ending-polaroid">📷 生成拍立得明信片</button>' +
         '<button class="btn btn-primary" type="button" data-act="ending-restart">再写一本 →</button>' +
         '<button class="btn" type="button" data-act="ending-album">📖 回忆册</button>' +
         '<button class="btn btn-ghost" type="button" data-act="ending-home">回到首页</button>' +
       "</div></div>";
     openOverlay(html, { locked: true, wide: true });
+  }
+
+
+  /* ---------------- 结局手账拍立得生成 ---------------- */
+  function generatePolaroidCard() {
+    var end = lastEnding || D.endings[D.endings.length - 1];
+    var r = role();
+    var canvas = document.createElement("canvas");
+    canvas.width = 640;
+    canvas.height = 860;
+    var ctx = canvas.getContext("2d");
+
+    // 1. 拍立得底卡纸张背景
+    ctx.fillStyle = "#faf5ee";
+    ctx.fillRect(0, 0, 640, 860);
+
+    // 浅米色复古相框微阴影
+    ctx.strokeStyle = "#e2d2c1";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(16, 16, 608, 828);
+
+    // 顶部复古手绘纸胶带
+    ctx.fillStyle = "rgba(224, 154, 130, 0.75)";
+    ctx.fillRect(240, 6, 160, 24);
+
+    // 2. 相纸照片视窗 (480 x 500)
+    var photoX = 40, photoY = 46, photoW = 560, photoH = 500;
+    var grad = ctx.createLinearGradient(photoX, photoY, photoX, photoY + photoH);
+    grad.addColorStop(0, "#dceff5");
+    grad.addColorStop(0.6, "#fdf1e2");
+    grad.addColorStop(1, "#fdeae0");
+    ctx.fillStyle = grad;
+    ctx.fillRect(photoX, photoY, photoW, photoH);
+    ctx.strokeStyle = "#cbb29c";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(photoX, photoY, photoW, photoH);
+
+    // 照片内温馨光芒与星星
+    ctx.font = "26px serif";
+    ctx.fillStyle = "#f3a683";
+    ctx.fillText("✨", photoX + 40, photoY + 50);
+    ctx.fillText("🌸", photoX + photoW - 60, photoY + 60);
+    ctx.fillText("🍂", photoX + 50, photoY + photoH - 40);
+    ctx.fillText("❄️", photoX + photoW - 70, photoY + photoH - 50);
+
+    // 绘制角色与心动符号
+    ctx.font = "72px serif";
+    ctx.textAlign = "center";
+    ctx.fillText("🐰", photoX + photoW * 0.36, photoY + photoH * 0.58);
+    ctx.font = "40px serif";
+    ctx.fillText("💗", photoX + photoW * 0.50, photoY + photoH * 0.52);
+    ctx.font = "72px serif";
+    ctx.fillText("🦊", photoX + photoW * 0.64, photoY + photoH * 0.58);
+
+    // 照片底部小标题
+    ctx.font = "bold 22px 'PingFang SC', sans-serif";
+    ctx.fillStyle = "#5c4033";
+    ctx.fillText("《小兔子与小狐狸 · 四季之心》", photoX + photoW * 0.5, photoY + photoH - 24);
+
+    // 3. 拍立得下部手记文字区
+    ctx.textAlign = "left";
+    // 结局徽章与标题
+    ctx.font = "bold 28px 'PingFang SC', sans-serif";
+    ctx.fillStyle = "#c25838";
+    ctx.fillText(end.badge + " · " + end.title, 48, 600);
+
+    // 纪念数据
+    ctx.font = "17px 'PingFang SC', sans-serif";
+    ctx.fillStyle = "#745848";
+    ctx.fillText("📅 走过四季 28 天   ♥ 心动 " + state.aff + "   ✦ 默契 " + state.bond, 48, 638);
+    ctx.fillText("📖 收集 " + state.memories.length + " 张回忆   🏅 四季信物 " + state.tokens.length + " / 4 枚", 48, 668);
+
+    // 经典引言
+    ctx.font = "italic 19px serif";
+    ctx.fillStyle = "#4a3528";
+    var quote = tpl(end.quote);
+    ctx.fillText("“ " + quote + " ”", 48, 715);
+
+    // 尾部手写签名与印戳
+    ctx.font = "16px 'PingFang SC', sans-serif";
+    ctx.fillStyle = "#957461";
+    ctx.fillText("—— 小兔子 & 小狐狸 · 森林手记留念", 48, 755);
+
+    // 纪念爪印印章
+    ctx.textAlign = "right";
+    ctx.font = "42px serif";
+    ctx.fillText("🐾", 580, 770);
+    ctx.font = "13px 'PingFang SC', sans-serif";
+    ctx.fillStyle = "#b48c74";
+    ctx.fillText("森林手记已盖戳", 585, 794);
+
+    var dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+
+    // 记录成就
+    var m = F.getMeta();
+    m.savedPolaroid = true;
+    F.patchMeta({ savedPolaroid: true });
+    syncAchievements();
+
+    var html = ovHead("手账拍立得", "📷 定格这一瞬的心意") +
+      '<div class="polaroid-view">' +
+        '<div class="polaroid-wrapper"><img src="' + dataUrl + '" alt="结局拍立得" class="polaroid-img"></div>' +
+        '<p class="polaroid-hint">💡 电脑可右键另存为图片，手机可长按图片保存到相册，分享给最想念的人。</p>' +
+        '<div class="ov-actions" style="justify-content:center">' +
+          '<a class="btn btn-primary" href="' + dataUrl + '" download="森林手记_拍立得纪念.jpg">下载保存图片</a>' +
+          '<button class="btn" type="button" data-act="ending-back">返回结局</button>' +
+        '</div>' +
+      '</div>';
+    openOverlay(html, { wide: true });
   }
 
   /* ---------------- 回忆册 / 玩法 / 重开 ---------------- */
@@ -899,6 +1177,9 @@
       case "close": closeOverlay(); break;
       case "do-action": doAction(btn.dataset.id); break;
       case "gift": giveGift(btn.dataset.item); break;
+      case "make-craft": doCraft(btn.dataset.id); break;
+      case "ending-polaroid": generatePolaroidCard(); break;
+      case "ending-back": renderEndingOverlay(); break;
       case "choice": chooseOption(Number(btn.dataset.i)); break;
       case "event-next": finishEvent(); break;
       case "endday": endDay(); break;

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN" data-theme="day">
 <head>
 <meta charset="UTF-8">
@@ -209,9 +209,19 @@
 <script src="assets/js/data.js"></script>
 <script src="assets/js/site.js"></script>
 <script>
+  // 注销所有已注册的 Service Worker 并清空 CacheStorage 缓存
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch((e) => {
-      console.log('Service Worker 注册失败:', e);
+    navigator.serviceWorker.getRegistrations().then(function (registrations) {
+      for (var reg of registrations) {
+        reg.unregister();
+      }
+    });
+  }
+  if ('caches' in window) {
+    caches.keys().then(function (names) {
+      for (var name of names) {
+        caches.delete(name);
+      }
     });
   }
 </script>

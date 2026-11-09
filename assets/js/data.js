@@ -156,27 +156,102 @@
   ];
 
   var playCards = [
-    { icon: "📅", title: "四季 · 28 天", text: "从初春写到冬末，每天 3 点行动力，安排散步、采集、写手记、送礼与邀约。" },
-    { icon: "💛", title: "心动与默契", text: "心思都藏在数值里：心情低落时收益会打折，默契够高才会解锁更私密的剧情。" },
-    { icon: "🎮", title: "季末小考验", text: "每 7 天一次触屏小游戏，接住花瓣与火星，或翻开记忆中的手记卡。" },
-    { icon: "📖", title: "回忆册与结局", text: "读过的故事会收进回忆册；第 28 天，由心动、默契与四枚信物决定结局。" }
+    { icon: "📅", title: "四季 · 28 天", text: "从初春写到冬末，每天 3 点行动力，安排散步、采集、写手记、送礼与专属邀约。" },
+    { icon: "🏡", title: "天气与小窝装点", text: "晴雨风雪带来不同加成；在工作台慢熬温热果酱、编织花环，点亮温馨树洞小窝。" },
+    { icon: "🎶", title: "季末考验与合奏", text: "每 7 天一次趣味小游戏，在秋风中轻击节拍合奏口琴，接住落樱火星，收集信物。" },
+    { icon: "📷", title: "拍立得与心声视界", text: "通关可生成一键保存的手账拍立得卡片；二周目更解锁 TA 悄悄留下的隐秘心声！" }
   ];
 
   var help = [
-    { icon: "☀️", title: "每天三格", text: "每天有 3 点行动力（AP）。散步、采集、聊天各占 1 格，邀约占 2 格。随时可以合上手记进入下一天。" },
+    { icon: "☀️", title: "每天三格与天气", text: "每天有 3 点行动力（AP）。晴天、雨天、微风与星光带来不同加成。小兔子嗅觉敏锐常有丰收，小狐狸旅人体力消耗更少。" },
+    { icon: "🎨", title: "小窝手作与装点", text: "采集的浆果、木柴与野花可在工作台慢熬果酱、编织花环或点亮星砂瓶，不仅能解锁树洞小窝装点，还能送给{{T}}作为高级心意。" },
     { icon: "⚡", title: "别忘了体力", text: "行动会消耗体力；体力不够就「歇一会儿」。心情低于 30 时，所有好感收益会打七折。" },
     { icon: "🎁", title: "送礼与邀约", text: "采集得到的物品可以送给{{T}}，每样喜好不同。每季还有一次专属邀约，需要对应的物品。" },
-    { icon: "🌳", title: "走向结局", text: "每 7 天有一场季末考验，赢了能拿到季节信物。第 28 天按心动、默契和信物数量判定五种结局之一。" },
-    { icon: "💾", title: "自动存档", text: "每一次行动与每一天结束都会自动保存在本机浏览器，关掉页面也能从首页或游戏页继续。" }
+    { icon: "🎶", title: "四季考验与合奏", text: "每 7 天有一场季末考验（春冬接落物、夏翻溪石、秋口琴和弦敲击），赢下可获得季节信物。" },
+    { icon: "📷", title: "结局与拍立得", text: "第 28 天迎来五种结局之一，支持一键生成专属纪念拍立得明信片；通关后二周目更可偷看「TA的心声批注」！" }
   ];
 
   /* ---------------- 物品 / 行动 ---------------- */
   var items = {
-    berry:    { name: "浆果", icon: "🍓", love: 7, react: "{{T}}盯着果子看了两秒：「我不爱吃甜的。」……可它连果蒂都吃干净了。" },
-    mushroom: { name: "蘑菇", icon: "🍄", love: 4, react: "{{T}}把蘑菇摆在窗台上：「晒得不错，勉强及格。」尾巴却轻轻晃了一下。" },
-    wood:     { name: "木柴", icon: "🌲", love: 3, react: "{{T}}接过去掂了掂：「挺沉。放着吧，我来劈。」" },
-    flower:   { name: "野花", icon: "🌼", love: 9, react: "{{T}}别过脸去：「……花就花吧，插哪儿？」耳朵尖红了一小片。" },
-    stardust: { name: "星砂", icon: "✨", love: 12, react: "{{T}}没说话，只是把那一点光拢在掌心，很久都没松开。" }
+    berry:         { name: "浆果", icon: "🍓", love: 7, react: "{{T}}盯着果子看了两秒：「我不爱吃甜的。」……可它连果蒂都吃干净了。" },
+    mushroom:      { name: "蘑菇", icon: "🍄", love: 4, react: "{{T}}把蘑菇摆在窗台上：「晒得不错，勉强及格。」尾巴却轻轻晃了一下。" },
+    wood:          { name: "木柴", icon: "🌲", love: 3, react: "{{T}}接过去掂了掂：「挺沉。放着吧，我来劈。」" },
+    flower:        { name: "野花", icon: "🌼", love: 9, react: "{{T}}别过脸去：「……花就花吧，插哪儿？」耳朵尖红了一小片。" },
+    stardust:      { name: "星砂", icon: "✨", love: 12, react: "{{T}}没说话，只是把那一点光拢在掌心，很久都没松开。" },
+    jam:           { name: "温热果酱", icon: "🍯", love: 16, react: "{{T}}小口尝了一下，眼睛亮起来：「……甜味刚好，下次多做一罐。」" },
+    bbq_skewer:    { name: "蘑菇烤串", icon: "🍢", love: 14, react: "{{T}}咬了一大口，被烫得直晃尾巴：「算你有良心，没烤焦。」" },
+    flower_wreath: { name: "森林花环", icon: "👑", love: 18, react: "{{T}}愣在原地，任由你把花环戴在它耳朵上：「……别笑，不好看吗？」" },
+    star_bookmark: { name: "星花书签", icon: "📑", love: 20, react: "{{T}}小心翼翼夹进自己的手记本里：「这种稀罕东西，我就替你收着了。」" }
+  };
+
+  /* ---------------- 小窝手作配方 ---------------- */
+  var recipes = [
+    {
+      id: "jam", name: "温热果酱", icon: "🍯",
+      desc: "用刚摘的鲜甜浆果和木柴慢熬出的一小罐甜意。",
+      materials: { berry: 2, wood: 1 }, product: "jam", decor: "jamJar", decorName: "窗边果酱罐"
+    },
+    {
+      id: "bbq_skewer", name: "蘑菇烤串", icon: "🍢",
+      desc: "在壁炉余烬上细细烤香的蘑菇，香气飘得很远。",
+      materials: { mushroom: 2, wood: 1 }, product: "bbq_skewer", decor: "warmStove", decorName: "暖融融壁炉"
+    },
+    {
+      id: "flower_wreath", name: "森林花环", icon: "👑",
+      desc: "用新鲜野花编织的花环，缀着红彤彤的小野莓。",
+      materials: { flower: 2, berry: 1 }, product: "flower_wreath", decor: "flowerVase", decorName: "素陶插花瓶"
+    },
+    {
+      id: "star_bookmark", name: "星花书签", icon: "📑",
+      desc: "将收集到的闪烁星砂与野花花瓣压制成的神奇书签。",
+      materials: { flower: 1, stardust: 1 }, product: "star_bookmark", decor: "stardustBottle", decorName: "发光星砂瓶"
+    }
+  ];
+
+  /* ---------------- 天气系统 ---------------- */
+  var weathers = [
+    { id: "sunny", name: "晴空暖阳", icon: "☀️", desc: "阳光穿透树梢，散步心情倍增。", hint: "散步心情 +2" },
+    { id: "rainy", name: "细雨霏霏", icon: "🌧️", desc: "雨声淅沥，串门时有躲雨温存。", hint: "串门好感额外 +2" },
+    { id: "starry", name: "漫天星光", icon: "🌠", desc: "清澈夜空，写手记偶遇星砂几率大增。", hint: "手记星砂概率倍增" },
+    { id: "breezy", name: "森林微风", icon: "🍃", desc: "清风徐来，采集格外轻快。", hint: "采集有几率额外丰收" },
+    { id: "snowy", name: "细雪轻落", icon: "❄️", desc: "雪落无声，炉边小憩格外暖身。", hint: "休息体力回复 +15" }
+  ];
+
+  /* ---------------- 二周目：TA的心声批注 ---------------- */
+  var secretThoughts = {
+    walk: [
+      "{{T}}心声：其实我早就在溪边数第 14 块石头了，就猜你今天会过来。",
+      "{{T}}心声：走路别老低着头看地面啊，不然怎么看得见我特意给你踢开的石子？",
+      "{{T}}心声：其实并肩走的时候，我悄悄放慢了脚步好几次。"
+    ],
+    forage: [
+      "{{T}}心声：那片低处浆果最甜，我昨天就帮你把带刺的荆棘全拨开了。",
+      "{{T}}心声：你摘浆果蹭在鼻尖上的草屑，可爱得我都不忍心提醒你。"
+    ],
+    mushroom: [
+      "{{T}}心声：你晒在窗台的那排蘑菇，我每次经过都数一遍，少一只我都心慌。",
+      "{{T}}心声：其实今天阴天本来晒不干，我是偷偷用尾巴扇了好久的微风。"
+    ],
+    wood: [
+      "{{T}}心声：笨蛋，那么沉的落枝干嘛自己拖，等我过来帮你扛不好吗。",
+      "{{T}}心声：看见你手心的细红痕，今晚我得把门前容易绊脚的树枝全扫干净。"
+    ],
+    write: [
+      "{{T}}心声：笔尖沙沙的声音真好听。你在手记里……写我的坏话了吗？",
+      "{{T}}心声：好想趁你喝水的时候，偷偷翻翻今天的最后一页写了什么。"
+    ],
+    craft: [
+      "{{T}}心声：你在忙碌的样子真专注，那个小窝越来越像两个人一起住的地方了。",
+      "{{T}}心声：闻到果酱飘出的甜味，我的尾巴不由自主地摆了快半个时辰。"
+    ],
+    chat: [
+      "{{T}}心声：我明明有很多话想说，可见到你一双大眼睛望过来，就只剩下「嗯」了。",
+      "{{T}}心声：今天的茶并不怎么甜，但只要是和你一起喝的，怎样都好。"
+    ],
+    rest: [
+      "{{T}}心声：睡吧睡吧，我守在门口，连风都不会吵醒你。",
+      "{{T}}心声：看你累得耳朵都耷拉着，把被角往上拉了拉，希望你做个甜梦。"
+    ]
   };
 
   var actions = [
@@ -190,6 +265,7 @@
       items: { wood: 2 }, bonus: { season: "autumn", items: { wood: 2 } } },
     { id: "write", name: "写手记", icon: "📝", ap: 1, energy: 10, desc: "把今天记下来，默契会悄悄长一点。",
       gain: { bond: 5, mood: 3 }, chance: "stardust" },
+    { id: "craft", name: "小窝手作", icon: "🎨", ap: 1, energy: 8, desc: "在工作台前熬果酱、编花环或打理小窝。", special: "craft" },
     { id: "chat", name: "串门聊天", icon: "💬", ap: 1, energy: 12, desc: "没什么要紧事，只是想听听它的声音。",
       gain: { aff: 3, bond: 3, mood: 2 }, chance: "encounter" },
     { id: "gift", name: "送一份礼", icon: "🎁", ap: 1, energy: 0, desc: "打开背包，挑一样{{T}}会喜欢的东西。", special: "gift" },
@@ -595,11 +671,11 @@
       token: "溪石"
     },
     autumn: {
-      title: "秋 · 手记翻翻", icon: "🍁", game: "memory",
-      intro: "落叶盖住了手记上的四组图画。{{T}}说：「翻开一样的，就算你把这一季记住了。」",
-      config: { pairs: 4, timeLimit: 38, icons: ["🍓", "🍄", "🌰", "🍯"] },
-      win: "一页不差。{{T}}把空果酱瓶递过来，标签上已经写好了两个名字。",
-      lose: "还差一点。{{T}}把最后的图轻轻翻开：「没关系，这一页我们还能再翻一次。」",
+      title: "秋 · 口琴与和弦", icon: "🎶", game: "rhythm",
+      intro: "秋风微凉，{{T}}坐在老橡树下吹起口琴。它拍拍身旁的草地：「来，跟着节拍敲击，和我合一首森林小夜曲！」",
+      config: { duration: 16, target: 8, tempo: 700 },
+      win: "琴声与击节默契交织，余音在林间散得很远。{{T}}把口琴用软布包好递给你：「以后这首曲子，只吹给你听。」",
+      lose: "节拍虽然落了几拍，但旋律依然很美。{{T}}笑弯了眼：「没关系，多练习几次，我们有的是时间。」",
       token: "果酱瓶"
     },
     winter: {
@@ -684,7 +760,10 @@
     { id: "a_heart", icon: "💗", name: "心跳满分", desc: "把心动值写到 100。", test: function (s) { return s.aff >= 100; } },
     { id: "a_quiz", icon: "✅", name: "默契小考", desc: "在首页问答里全对。", test: function (s, m) { return !!m.quizPerfect; } },
     { id: "a_ending", icon: "✏️", name: "写到最后一页", desc: "读完任意一个结局。", test: function (s, m) { return m.endings.length >= 1; } },
-    { id: "a_secret", icon: "✨", name: "四季之外", desc: "抵达隐藏结局。", test: function (s, m) { return m.endings.indexOf("secret") >= 0; } }
+    { id: "a_secret", icon: "✨", name: "四季之外", desc: "抵达隐藏结局。", test: function (s, m) { return m.endings.indexOf("secret") >= 0; } },
+    { id: "a_craft", icon: "🎨", name: "暖意小作坊", desc: "在小窝中完成第一次手作。", test: function (s) { return (s.crafts || 0) >= 1; } },
+    { id: "a_decor", icon: "🏡", name: "装点森林小窝", desc: "打造至少 3 件温馨小窝装饰。", test: function (s) { return Object.keys(s.homeDecor || {}).length >= 3; } },
+    { id: "a_polaroid", icon: "📷", name: "定格四季", desc: "生成一张结局手账拍立得卡片。", test: function (s, m) { return !!m.savedPolaroid; } }
   ];
 
   window.ForestData = {
@@ -707,7 +786,10 @@
     dates: dates,
     trials: trials,
     endings: endings,
-    achievements: achievements
+    achievements: achievements,
+    recipes: recipes,
+    weathers: weathers,
+    secretThoughts: secretThoughts
   };
 })();
 

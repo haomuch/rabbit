@@ -197,10 +197,66 @@
     winter: ["❄️", "✨", "❄️", "⭐", "❄️", "✨"]
   };
 
+
+  /* ---------- 小窝装饰物 SVG ---------- */
+  var DECOR_ITEMS = {
+    jamJar: function (s) {
+      var sz = s || 38;
+      return '<svg viewBox="0 0 60 70" width="' + sz + '" height="' + (sz * 1.16) + '" class="decor-svg" aria-label="窗边果酱罐">' +
+        '<rect x="14" y="22" width="32" height="42" rx="7" fill="#fbe3cf" stroke="#c48a60" stroke-width="2"/>' +
+        '<rect x="17" y="30" width="26" height="30" rx="4" fill="#df5353" opacity="0.85"/>' +
+        '<ellipse cx="30" cy="45" rx="8" ry="4" fill="#f79797" opacity="0.6"/>' +
+        '<path d="M11 20 Q30 15 49 20 L46 25 Q30 22 14 25 Z" fill="#e86e58"/>' +
+        '<path d="M12 24 Q30 28 48 24" stroke="#8d4b32" stroke-width="2" fill="none"/>' +
+        '<circle cx="30" cy="25" r="2.5" fill="#fceadc"/>' +
+        '</svg>';
+    },
+    warmStove: function (s) {
+      var sz = s || 42;
+      return '<svg viewBox="0 0 64 64" width="' + sz + '" height="' + sz + '" class="decor-svg" aria-label="暖融融壁炉">' +
+        '<path d="M10 52 L54 52 L48 38 L16 38 Z" fill="#6d5345"/>' +
+        '<path d="M20 48 L44 48 L40 40 L24 40 Z" fill="#3c271e"/>' +
+        '<path d="M26 44 C26 36 32 30 32 24 C36 30 40 35 38 43 C37 45 35 46 32 46 C29 46 26 44 26 44 Z" fill="#ff7f38"/>' +
+        '<path d="M29 44 C29 40 32 36 32 32 C34 36 36 39 35 43 C34 44 33 45 32 45 C31 45 29 44 29 44 Z" fill="#ffe259"/>' +
+        '<circle cx="28" cy="20" r="1.5" fill="#ffb443" opacity="0.8"/>' +
+        '<circle cx="37" cy="18" r="1.2" fill="#ffb443" opacity="0.8"/>' +
+        '</svg>';
+    },
+    flowerVase: function (s) {
+      var sz = s || 38;
+      return '<svg viewBox="0 0 60 70" width="' + sz + '" height="' + (sz * 1.16) + '" class="decor-svg" aria-label="素陶插花瓶">' +
+        '<path d="M22 62 L38 62 L35 36 L25 36 Z" fill="#cfb297" stroke="#9d7e62" stroke-width="2"/>' +
+        '<line x1="30" y1="36" x2="30" y2="18" stroke="#689f63" stroke-width="2.5"/>' +
+        '<line x1="28" y1="36" x2="20" y2="22" stroke="#689f63" stroke-width="2"/>' +
+        '<line x1="32" y1="36" x2="40" y2="24" stroke="#689f63" stroke-width="2"/>' +
+        '<circle cx="30" cy="16" r="6" fill="#f8e71c"/>' +
+        '<circle cx="30" cy="16" r="2.5" fill="#e29b14"/>' +
+        '<circle cx="20" cy="20" r="4.5" fill="#ffffff" stroke="#e0c7a8"/>' +
+        '<circle cx="20" cy="20" r="1.8" fill="#f5a623"/>' +
+        '<circle cx="40" cy="22" r="4" fill="#e75b5b"/>' +
+        '</svg>';
+    },
+    stardustBottle: function (s) {
+      var sz = s || 38;
+      return '<svg viewBox="0 0 60 70" width="' + sz + '" height="' + (sz * 1.16) + '" class="decor-svg" aria-label="发光星砂瓶">' +
+        '<line x1="30" y1="0" x2="30" y2="16" stroke="#c2a688" stroke-width="1.8" stroke-dasharray="2,2"/>' +
+        '<rect x="23" y="14" width="14" height="6" rx="2" fill="#b08a65"/>' +
+        '<path d="M24 20 L36 20 L40 28 L40 56 C40 60 36 64 30 64 C24 64 20 60 20 56 L20 28 Z" fill="#e5f5f9" stroke="#7ebacb" stroke-width="2" opacity="0.95"/>' +
+        '<circle cx="30" cy="46" r="8" fill="#ffeaa7" opacity="0.6"/>' +
+        '<polygon points="30,34 32,40 38,40 33,44 35,50 30,46 25,50 27,44 22,40 28,40" fill="#f1c40f"/>' +
+        '<circle cx="25" cy="54" r="1.5" fill="#fff"/>' +
+        '<circle cx="35" cy="38" r="1.2" fill="#fff"/>' +
+        '</svg>';
+    }
+  };
   window.ForestArt = {
     bunny: bunny,
     fox: fox,
     get: function (who, mood) { return who === "fox" ? fox(mood) : bunny(mood); },
+    decor: function (name, size) {
+      var fn = DECOR_ITEMS[name];
+      return fn ? fn(size) : "";
+    },
     heart: function (size) {
       var s = size || 40;
       return '<svg viewBox="0 0 60 60" width="' + s + '" height="' + s + '" aria-hidden="true">' +
