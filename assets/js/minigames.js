@@ -239,7 +239,6 @@
           '<div class="rhythm-start-icon">🦊🎶</div>' +
           '<div class="rhythm-line"></div>' +
           '<div class="rhythm-hit-zone" id="hitZone">' +
-            '<span class="hit-ring"></span>' +
             '<span class="hit-center">🐰</span>' +
           '</div>' +
         '</div>' +
@@ -258,7 +257,6 @@
     var feedbackEl = root.querySelector("#rhythmFeedback");
     var rhythmBtn = root.querySelector("#rhythmBtn");
 
-    var trackWidth = track.clientWidth || 320;
     var symbols = ["🎶", "🍁", "✨", "🍂", "💛"];
 
     function showFeedback(text, cls) {
@@ -345,6 +343,7 @@
     });
 
     function onKey(e) {
+      if (e.repeat) return;
       if (e.code === "Space" || e.key === " ") {
         e.preventDefault();
         triggerHit();

@@ -534,13 +534,13 @@
   font-size: 1.6rem;
 }
 .rhythm-hit-zone {
-  position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+  position: absolute; left: 88%; top: 50%; transform: translate(-50%, -50%);
   width: 58px; height: 58px; border-radius: 50%;
   border: 2.5px dashed var(--accent); display: flex; align-items: center; justify-content: center;
   transition: all .15s ease-out;
 }
 .rhythm-hit-zone.pulse {
-  transform: translateY(-50%) scale(1.22);
+  transform: translate(-50%, -50%) scale(1.22);
   border-color: #f39c12; background: rgba(243, 156, 18, 0.2);
 }
 .hit-center { font-size: 1.5rem; }

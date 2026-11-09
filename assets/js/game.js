@@ -40,8 +40,35 @@
   }
   /* 未开局时（例如从开场界面打开玩法说明）用当前选中的视角兜底，避免 {{T}} 露在界面上 */
   function tpl(s) {
-    var r = D.roles[(state && state.role) || selectedRole] || D.roles.bunny;
-    return String(s == null ? "" : s).replace(/\{\{T\}\}/g, r.target).replace(/\{\{M\}\}/g, r.me);
+    var roleKey = (state && state.role) || selectedRole;
+    var r = D.roles[roleKey] || D.roles.bunny;
+    var res = String(s == null ? "" : s).replace(/\{\{T\}\}/g, r.target).replace(/\{\{M\}\}/g, r.me);
+    if (roleKey === "fox") {
+      res = res
+        .replace(/蓬松的大尾巴/g, "大大的荷叶伞")
+        .replace(/大尾巴/g, "长耳朵")
+        .replace(/把蓬松的尾巴铺在椅子旁边，像一条暖和的毯子/g, "把晒干的软草铺在椅子旁边，像一条暖和的毯子")
+        .replace(/尾巴铺在椅子边/g, "两只长耳朵耷在椅子边")
+        .replace(/尾巴借你靠一会儿/g, "肩膀借你靠一会儿")
+        .replace(/尾巴却轻轻晃了一下/g, "长耳朵却轻轻抖了一下")
+        .replace(/尾巴尖却卷住了你的袖口/g, "小爪子却轻轻拉住了你的袖口")
+        .replace(/尾巴张着保持平衡/g, "小爪子张着保持平衡")
+        .replace(/尾巴一闪就不见了/g, "一蹦一跳很快就不见了")
+        .replace(/尾巴扫到了门框/g, "长耳朵蹭到了门框")
+        .replace(/尾巴却悄悄挡在你靠水的那一侧/g, "悄悄伸爪拉住你靠水的那一侧")
+        .replace(/把\{\{T\}\}的尾巴染成金色/g, "把\{\{T\}\}的长耳朵染成金色")
+        .replace(/尾巴却收得更拢、更暖了/g, "把身子缩得更拢、更暖了")
+        .replace(/尾巴慢慢扫过雪面/g, "爪子在雪地上轻轻画着圆")
+        .replace(/习惯性地张开尾巴/g, "习惯性地缩紧身子")
+        .replace(/把花别在它尾巴上/g, "把花别在它耳朵上")
+        .replace(/把尾巴放得离火远了一点/g, "往后退了半步，小心护着耳朵")
+        .replace(/它自己把手插进尾巴里/g, "它自己把小爪子缩进毛茸茸的怀里")
+        .replace(/把尾巴铺在你脚边/g, "把软垫悄悄推到你脚边")
+        .replace(/直晃尾巴/g, "两只耳朵直竖")
+        .replace(/用尾巴扇了好久的微风/g, "用大树叶扇了好久的微风")
+        .replace(/我的尾巴不由自主地摆了快半个时辰/g, "我的耳朵不由自主地抖了快半个时辰");
+    }
+    return res;
   }
   function season() { return D.seasons[clamp(Math.floor((state.day - 1) / 7), 0, 3)]; }
   function role() { return D.roles[(state && state.role) || selectedRole] || D.roles.bunny; }
@@ -424,6 +451,7 @@
     if (state.ap < a.ap) return { ok: false, why: "行动点不够" };
     var energyCost = a.energy;
     if (state.role === "fox" && energyCost) energyCost = Math.max(4, energyCost - 3);
+    if (state.weather === "rainy" && a.id === "walk") energyCost += 2;
     if (energyCost && state.energy < energyCost) return { ok: false, why: "体力不够，先歇一会儿" };
     if (a.special === "gift" && !anyItems()) return { ok: false, why: "背包空空的" };
     return { ok: true, why: "" };
@@ -436,7 +464,10 @@
 
     $("actionGrid").innerHTML = D.actions.map(function (a) {
       var st = actionStatus(a, s);
-      var cost = a.ap + " AP" + (a.energy ? " · " + a.energy + " 体力" : "");
+      var actualEnergy = a.energy;
+      if (state.role === "fox" && actualEnergy) actualEnergy = Math.max(4, actualEnergy - 3);
+      if (state.weather === "rainy" && a.id === "walk") actualEnergy += 2;
+      var cost = a.ap + " AP" + (actualEnergy ? " · " + actualEnergy + " 体力" : "");
       if (a.special === "date") cost += " · " + costText(D.dateCost[s.id] || {});
       var bonus = a.bonus && a.bonus.season === s.id;
       return '<button class="action-card" type="button" data-act="do-action" data-id="' + a.id + '"' +
@@ -560,8 +591,8 @@
       notes.push("🐰 小兔子敏锐嗅觉触发：额外丰收！");
     }
     // 天气微风加成
-    if (state.weather === "breezy" && (id === "forage" || id === "wood") && Math.random() < 0.3) {
-      var breezeItem = id === "forage" ? { berry: 1 } : { wood: 1 };
+    if (state.weather === "breezy" && (id === "forage" || id === "wood" || id === "mushroom") && Math.random() < 0.3) {
+      var breezeItem = id === "forage" ? { berry: 1 } : (id === "mushroom" ? { mushroom: 1 } : { wood: 1 });
       addItems(breezeItem); mergeMap(gained, breezeItem);
       notes.push("🍃 森林微风拂过：顺手多捡了一份！");
     }
@@ -591,6 +622,7 @@
       if (Math.random() < p) { addItems({ flower: 1 }); mergeMap(gained, { flower: 1 }); }
     } else if (kind === "stardust") {
       var q = s.id === "winter" ? 0.45 : 0.12;
+      if (state.weather === "starry") q *= 2;
       if (Math.random() < q) { addItems({ stardust: 1 }); mergeMap(gained, { stardust: 1 }); }
     } else if (kind === "encounter") {
       if (Math.random() < 0.42) {
@@ -648,6 +680,9 @@
     consumeItems(rc.materials);
     state.items[rc.product] = (state.items[rc.product] || 0) + 1;
     state.ap -= 1;
+    var craftEnergy = 8;
+    if (state.role === "fox") craftEnergy = Math.max(4, craftEnergy - 3);
+    state.energy = clamp(state.energy - craftEnergy, 0, 100);
     state.crafts = (state.crafts || 0) + 1;
     if (!state.homeDecor) state.homeDecor = {};
     state.homeDecor[rc.decor] = true;
@@ -720,7 +755,9 @@
     var cost = D.dateCost[s.id] || {};
     consumeItems(cost);
     state.ap -= a.ap;
-    state.energy = clamp(state.energy - a.energy, 0, 100);
+    var actualEnergy = a.energy;
+    if (state.role === "fox" && actualEnergy) actualEnergy = Math.max(4, actualEnergy - 3);
+    state.energy = clamp(state.energy - actualEnergy, 0, 100);
     state.dates++;
     var pool = D.dates.filter(function (d) { return d.season === s.id; });
     var unseen = pool.filter(function (d) { return state.seenEvents.indexOf(d.id) < 0; });

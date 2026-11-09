@@ -283,7 +283,7 @@
   (function renderEntry() {
     var save = F.getSave(F.SAVE_KEY);
     var meta = F.getMeta();
-    var status = $("playStatus"), cont = $("playContinueBtn"), heroStart = $("heroStart");
+    var status = $("playStatus"), cont = $("playContinueBtn"), heroStart = $("heroStart"), playStart = $("playStartBtn");
     var alive = !!(save && save.v === 2 && !save.ending);
 
     cont.hidden = !alive;
@@ -296,14 +296,17 @@
       cont.textContent = "继续第 " + Number(save.day) + " 天 →";
       heroStart.textContent = "继续第 " + Number(save.day) + " 天 →";
       heroStart.setAttribute("href", "game.html");
+      if (playStart) playStart.textContent = "写一本新的手记 →";
     } else if (save && save.ending) {
       var end = D.endings.filter(function (e) { return e.id === save.ending; })[0];
       status.innerHTML = "上一本手记已经写完：<strong>" + esc(end ? end.title : "某个结局") +
         "</strong>　已解锁 " + meta.endings.length + " 个结局";
       heroStart.textContent = "再写一本新的手记 →";
       heroStart.setAttribute("href", "game.html?new=1");
+      if (playStart) playStart.textContent = "再写一本新的手记 →";
     } else {
       status.textContent = "手记架还空着 —— 第一页，等你来写。";
+      if (playStart) playStart.textContent = "开始新的手记 →";
     }
   })();
 
